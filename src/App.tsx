@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 
 type Category = {
@@ -31,6 +31,24 @@ type PromoResponse = {
 
 const API_BASE = 'https://venus.hnb.lk/api'
 const FILE_BASE = 'https://venus.hnb.lk/'
+const CATEGORY_ACRONYMS = new Set(['amex', 'bnpl', 'emi', 'hnb', 'lkr', 'sms', 'usd', 'visa'])
+
+const formatCategoryName = (value: string) =>
+  value
+    .replace(/[_-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .split(' ')
+    .map((part) => {
+      const normalized = part.toLowerCase()
+
+      if (CATEGORY_ACRONYMS.has(normalized)) {
+        return normalized.toUpperCase()
+      }
+
+      return normalized.charAt(0).toUpperCase() + normalized.slice(1)
+    })
+    .join(' ')
 
 function App() {
   const [categories, setCategories] = useState<Category[]>([])
@@ -122,31 +140,19 @@ function App() {
     return () => controller.abort()
   }, [selectedCategoryId])
 
-  const categoryCountByOrder = useMemo(() => {
-    return categories.reduce<Record<number, number>>((acc, item) => {
-      acc[item.order] = (acc[item.order] || 0) + 1
-      return acc
-    }, {})
-  }, [categories])
-
   const selectedCategoryName =
-    categories.find((category) => category.id === selectedCategoryId)?.category ?? 'Selected Category'
+    formatCategoryName(
+      categories.find((category) => category.id === selectedCategoryId)?.category ??
+        'Selected Category',
+    )
 
   const isLoading = loadingCategories || (selectedCategoryId !== null && loadingPromos)
 
   return (
     <main className="page">
       <header className="page-header">
-        <p className="eyebrow">HNB Card Promotions</p>
-        <h1>Credit Card Promotions Layout</h1>
-        <p className="subtitle">
-          Click a category to load offers from <code>get_all_web_card_promos</code> using that
-          category id.
-        </p>
+        <h1>HNB Card Promotions</h1>
       </header>
-
-      {isLoading && <p className="status">Loading categories and promotions…</p>}
-      {error && <p className="status error">{error}</p>}
 
       {!loadingCategories && !error && (
         <>
@@ -163,11 +169,7 @@ function App() {
                   className={`category-card ${selectedCategoryId === item.id ? 'active' : ''}`}
                   onClick={() => setSelectedCategoryId(item.id)}
                 >
-                  <p className="category-name">{item.category}</p>
-                  <div className="category-meta">
-                    <span>Order {item.order}</span>
-                    <span>{categoryCountByOrder[item.order]} in this order</span>
-                  </div>
+                  <p className="category-name">{formatCategoryName(item.category)}</p>
                 </button>
               ))}
             </div>
@@ -176,7 +178,15 @@ function App() {
           {!error && (
             <section className="panel">
               <div className="panel-title-row">
-                <h2>{selectedCategoryName} Promotions</h2>
+                <div className="results-heading">
+                  <h2>{selectedCategoryName} Promotions</h2>
+                  {isLoading && (
+                    <span className="loading-indicator" aria-live="polite" aria-busy="true">
+                      <span className="loading-spinner" aria-hidden="true" />
+                      Loading...
+                    </span>
+                  )}
+                </div>
                 <span>{promoTotal} total items</span>
               </div>
               <p className="subtitle">Showing page {promoPage} for Credit card offers.</p>
