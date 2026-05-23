@@ -10,7 +10,10 @@ function App() {
     setSelectedCategoryId,
     promos,
     promoPage,
+    promoTotalPages,
     promoTotal,
+    canLoadMorePromos,
+    loadMorePromos,
     loadingCategories,
     loadingPromos,
     error,
@@ -38,6 +41,9 @@ function App() {
               isLoading={isLoading}
               promoTotal={promoTotal}
               promoPage={promoPage}
+              promoTotalPages={promoTotalPages}
+              canLoadMorePromos={canLoadMorePromos}
+              onLoadMorePromos={loadMorePromos}
               promos={promos}
             />
           )}

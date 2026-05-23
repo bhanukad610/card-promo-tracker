@@ -217,6 +217,23 @@
   font-weight: 700;
 }
 
+.load-more-btn {
+  margin: 1rem auto 0;
+  display: block;
+  border: 1px solid rgba(109, 40, 217, 0.2);
+  border-radius: 999px;
+  background: #f5f3ff;
+  color: #5b21b6;
+  padding: 0.6rem 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.load-more-btn:disabled {
+  opacity: 0.7;
+  cursor: not-allowed;
+}
+
 @media (max-width: 680px) {
   .page {
     padding: 1rem;

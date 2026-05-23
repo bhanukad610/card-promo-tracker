@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { fetchCategories, fetchPromosByCategory } from '../api/promos'
 import type { Category, Promo } from '../types/promo'
 import { formatCategoryName } from '../utils/formatters'
@@ -8,6 +8,7 @@ export const usePromoData = () => {
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null)
   const [promos, setPromos] = useState<Promo[]>([])
   const [promoPage, setPromoPage] = useState(1)
+  const [promoTotalPages, setPromoTotalPages] = useState(1)
   const [promoTotal, setPromoTotal] = useState(0)
   const [loadingCategories, setLoadingCategories] = useState(true)
   const [loadingPromos, setLoadingPromos] = useState(true)
@@ -54,9 +55,10 @@ export const usePromoData = () => {
       setError(null)
 
       try {
-        const promoJson = await fetchPromosByCategory(selectedCategoryId, controller.signal)
+        const promoJson = await fetchPromosByCategory(selectedCategoryId, 1, controller.signal)
         setPromos(promoJson.data)
         setPromoPage(promoJson.page)
+        setPromoTotalPages(promoJson.totalPages)
         setPromoTotal(promoJson.total)
       } catch (loadError) {
         if (!(loadError instanceof DOMException && loadError.name === 'AbortError')) {
@@ -71,6 +73,32 @@ export const usePromoData = () => {
 
     return () => controller.abort()
   }, [selectedCategoryId])
+
+  const canLoadMorePromos = promoPage < promoTotalPages
+
+  const loadMorePromos = useCallback(async () => {
+    if (selectedCategoryId === null || loadingPromos || !canLoadMorePromos) {
+      return
+    }
+
+    const controller = new AbortController()
+    setLoadingPromos(true)
+
+    try {
+      const nextPage = promoPage + 1
+      const promoJson = await fetchPromosByCategory(selectedCategoryId, nextPage, controller.signal)
+      setPromos((currentPromos) => [...currentPromos, ...promoJson.data])
+      setPromoPage(promoJson.page)
+      setPromoTotalPages(promoJson.totalPages)
+      setPromoTotal(promoJson.total)
+    } catch (loadError) {
+      if (!(loadError instanceof DOMException && loadError.name === 'AbortError')) {
+        setError('Failed to load more promotions. Please try again.')
+      }
+    } finally {
+      setLoadingPromos(false)
+    }
+  }, [canLoadMorePromos, loadingPromos, promoPage, selectedCategoryId])
 
   const selectedCategoryName = useMemo(
     () =>
@@ -87,7 +115,10 @@ export const usePromoData = () => {
     setSelectedCategoryId,
     promos,
     promoPage,
+    promoTotalPages,
     promoTotal,
+    canLoadMorePromos,
+    loadMorePromos,
     loadingCategories,
     loadingPromos,
     error,

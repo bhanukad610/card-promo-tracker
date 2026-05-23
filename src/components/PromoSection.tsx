@@ -6,6 +6,9 @@ type PromoSectionProps = {
   isLoading: boolean
   promoTotal: number
   promoPage: number
+  promoTotalPages: number
+  canLoadMorePromos: boolean
+  onLoadMorePromos: () => void
   promos: Promo[]
 }
 
@@ -14,6 +17,9 @@ export const PromoSection = ({
   isLoading,
   promoTotal,
   promoPage,
+  promoTotalPages,
+  canLoadMorePromos,
+  onLoadMorePromos,
   promos,
 }: PromoSectionProps) => (
   <section className="panel">
@@ -29,7 +35,9 @@ export const PromoSection = ({
       </div>
       <span>{promoTotal} total items</span>
     </div>
-    <p className="subtitle">Showing page {promoPage} for Credit card offers.</p>
+    <p className="subtitle">
+      Showing page {promoPage} of {promoTotalPages} for Credit card offers.
+    </p>
     <div className="promo-grid">
       {promos.map((promo) => (
         <article key={promo.id} className="promo-card">
@@ -50,5 +58,10 @@ export const PromoSection = ({
         </article>
       ))}
     </div>
+    {canLoadMorePromos && (
+      <button type="button" className="load-more-btn" onClick={onLoadMorePromos} disabled={isLoading}>
+        {isLoading ? 'Loading more...' : 'Load more'}
+      </button>
+    )}
   </section>
 )
