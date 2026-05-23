@@ -16,10 +16,11 @@ export const fetchCategories = async (signal: AbortSignal): Promise<CategoryResp
 
 export const fetchPromosByCategory = async (
   categoryId: number,
+  page: number,
   signal: AbortSignal,
 ): Promise<PromoResponse> => {
   const response = await fetch(
-    `${API_BASE}/get_all_web_card_promos?cat=${categoryId}&page=1&cardType=Credit`,
+    `${API_BASE}/get_all_web_card_promos?cat=${categoryId}&page=${page}&cardType=Credit`,
     {
       method: 'GET',
       signal,
