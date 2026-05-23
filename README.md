@@ -1,73 +1,91 @@
-# React + TypeScript + Vite
+# Card Promo Tracker
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+Card Promo Tracker is a lightweight React app for browsing HNB card promotions by category. It loads promotion categories from the HNB API, lets users switch between them, and shows the current set of credit card offers in a simple card-based interface.
 
-Currently, two official plugins are available:
+## What the app does
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+- Fetches promotion categories from `https://venus.hnb.lk/api`
+- Sorts categories by the API-provided display order
+- Auto-selects the first available category on load
+- Fetches promotions for the selected category
+- Shows merchant, promotion title, card type, and validity date
+- Displays loading states while data is being retrieved
 
-## React Compiler
+## Current behavior
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+- Promotions are currently fetched for `Credit` cards only
+- The app requests page `1` from the promotions endpoint
+- Category and promotion data are loaded live from the HNB API at runtime
+- If the API request fails, the app shows a user-facing error message
 
-## Expanding the ESLint configuration
+## Tech stack
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+- React 19
+- TypeScript
+- Vite
+- ESLint
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## Project structure
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+```text
+src/
+  api/           API request helpers
+  components/    UI sections for categories and promotions
+  constants/     API base URLs
+  hooks/         Data loading and state management
+  types/         API response types
+  utils/         Small formatting helpers
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+## Getting started
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+### Prerequisites
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+- Node.js 18+ recommended
+- npm
+
+### Install dependencies
+
+```bash
+npm install
 ```
+
+### Start the development server
+
+```bash
+npm run dev
+```
+
+Open the local Vite URL shown in the terminal, usually `http://localhost:5173`.
+
+### Build for production
+
+```bash
+npm run build
+```
+
+### Preview the production build
+
+```bash
+npm run preview
+```
+
+## Available scripts
+
+- `npm run dev` starts the Vite development server
+- `npm run build` runs TypeScript compilation and creates a production build
+- `npm run preview` serves the built app locally
+- `npm run lint` runs ESLint
+
+## API endpoints used
+
+- Categories: `GET /get_all_card_promotion_categories`
+- Promotions by category: `GET /get_all_web_card_promos?cat={id}&page=1&cardType=Credit`
+
+Base URL: `https://venus.hnb.lk/api`
+
+## Notes
+
+- No environment variables are required for the current setup
+- Because the app depends on a live external API, local development requires internet access
+- The UI is read-only; it does not store user data or modify promotions
