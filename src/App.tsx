@@ -11,6 +11,8 @@ function App() {
     categories,
     selectedCategoryId,
     setSelectedCategoryId,
+    selectedCardType,
+    setSelectedCardType,
     promos,
     promoPage,
     promoTotalPages,
@@ -37,6 +39,8 @@ function App() {
             categories={categories}
             selectedCategoryId={selectedCategoryId}
             onSelectCategory={setSelectedCategoryId}
+            selectedCardType={selectedCardType}
+            onSelectCardType={setSelectedCardType}
           />
           {!error && (
             <PromoSection
