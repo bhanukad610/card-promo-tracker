@@ -32,6 +32,7 @@ function App() {
     setActiveSearchText,
     setActiveSearchStartDate,
     setActiveSearchEndDate,
+    clearSearchFilters,
     isSearchMode,
   } = usePromoData()
 
@@ -70,6 +71,7 @@ function App() {
               onSearchTextChange={setSearchText}
               onSearchStartDateChange={setSearchStartDate}
               onSearchEndDateChange={setSearchEndDate}
+              onClearSearchFilters={clearSearchFilters}
               onSearch={() => {
                 setActiveSearchText(searchText)
                 setActiveSearchStartDate(searchStartDate)

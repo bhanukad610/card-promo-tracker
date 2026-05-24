@@ -5,16 +5,14 @@ import { formatCategoryName } from '../utils/formatters'
 
 const SEARCH_PAGE_SIZE = 12
 
-const formatDate = (date: Date) => date.toISOString().split('T')[0]
-
 export const usePromoData = () => {
   const [selectedCardType, setSelectedCardType] = useState<'All' | 'Credit' | 'Debit'>('All')
   const [searchText, setSearchText] = useState('')
-  const [searchStartDate, setSearchStartDate] = useState(formatDate(new Date()))
-  const [searchEndDate, setSearchEndDate] = useState(formatDate(new Date(Date.now() + 1000 * 60 * 60 * 24 * 90)))
+  const [searchStartDate, setSearchStartDate] = useState('')
+  const [searchEndDate, setSearchEndDate] = useState('')
   const [activeSearchText, setActiveSearchText] = useState('')
-  const [activeSearchStartDate, setActiveSearchStartDate] = useState(searchStartDate)
-  const [activeSearchEndDate, setActiveSearchEndDate] = useState(searchEndDate)
+  const [activeSearchStartDate, setActiveSearchStartDate] = useState('')
+  const [activeSearchEndDate, setActiveSearchEndDate] = useState('')
   const [categories, setCategories] = useState<Category[]>([])
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null)
   const [promos, setPromos] = useState<Promo[]>([])
@@ -147,7 +145,8 @@ export const usePromoData = () => {
 
   const selectedCategoryName = useMemo(() => {
     if (isSearchMode) {
-      return `Search results for "${activeSearchText.trim()}"`
+      const searchLabel = activeSearchText.trim()
+      return searchLabel ? `Search results for "${searchLabel}"` : 'Search results'
     }
 
     return formatCategoryName(
@@ -155,10 +154,27 @@ export const usePromoData = () => {
     )
   }, [activeSearchText, categories, isSearchMode, selectedCategoryId])
 
+  const clearSearchFilters = useCallback(() => {
+    setSearchText('')
+    setSearchStartDate('')
+    setSearchEndDate('')
+    setActiveSearchText('')
+    setActiveSearchStartDate('')
+    setActiveSearchEndDate('')
+  }, [])
+
+  const selectCategory = useCallback(
+    (categoryId: number) => {
+      clearSearchFilters()
+      setSelectedCategoryId(categoryId)
+    },
+    [clearSearchFilters],
+  )
+
   return {
     categories,
     selectedCategoryId,
-    setSelectedCategoryId,
+    setSelectedCategoryId: selectCategory,
     selectedCardType,
     setSelectedCardType,
     promos,
@@ -181,6 +197,7 @@ export const usePromoData = () => {
     setActiveSearchText,
     setActiveSearchStartDate,
     setActiveSearchEndDate,
+    clearSearchFilters,
     isSearchMode,
   }
 }

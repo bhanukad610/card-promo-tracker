@@ -19,6 +19,7 @@ type PromoSectionProps = {
   onSearchTextChange: (value: string) => void
   onSearchStartDateChange: (value: string) => void
   onSearchEndDateChange: (value: string) => void
+  onClearSearchFilters: () => void
   onSearch: () => void
 }
 
@@ -39,12 +40,15 @@ export const PromoSection = ({
   onSearchTextChange,
   onSearchStartDateChange,
   onSearchEndDateChange,
+  onClearSearchFilters,
   onSearch,
 }: PromoSectionProps) => {
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault()
     onSearch()
   }
+
+  const canClearFilters = isSearchMode || Boolean(searchText.trim()) || Boolean(searchStartDate) || Boolean(searchEndDate)
 
   return (
     <section className="panel">
@@ -72,6 +76,14 @@ export const PromoSection = ({
         />
         <button type="submit" className="search-btn">
           Search
+        </button>
+        <button
+          type="button"
+          className="search-btn search-btn-secondary"
+          onClick={onClearSearchFilters}
+          disabled={!canClearFilters}
+        >
+          Clear filters
         </button>
       </form>
       <div className="panel-title-row">
