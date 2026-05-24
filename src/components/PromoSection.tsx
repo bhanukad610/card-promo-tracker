@@ -13,8 +13,12 @@ type PromoSectionProps = {
   onOpenPromoDetail: (promoId: number) => void
   promos: Promo[]
   searchText: string
+  searchStartDate: string
+  searchEndDate: string
   isSearchMode: boolean
   onSearchTextChange: (value: string) => void
+  onSearchStartDateChange: (value: string) => void
+  onSearchEndDateChange: (value: string) => void
   onSearch: () => void
 }
 
@@ -29,8 +33,12 @@ export const PromoSection = ({
   onOpenPromoDetail,
   promos,
   searchText,
+  searchStartDate,
+  searchEndDate,
   isSearchMode,
   onSearchTextChange,
+  onSearchStartDateChange,
+  onSearchEndDateChange,
   onSearch,
 }: PromoSectionProps) => {
   const handleSubmit = (event: FormEvent) => {
@@ -47,6 +55,20 @@ export const PromoSection = ({
           onChange={(event) => onSearchTextChange(event.target.value)}
           placeholder="Search promotions by location, merchant, or keyword"
           className="search-input"
+        />
+        <input
+          type="date"
+          value={searchStartDate}
+          onChange={(event) => onSearchStartDateChange(event.target.value)}
+          className="search-input"
+          aria-label="Search start date"
+        />
+        <input
+          type="date"
+          value={searchEndDate}
+          onChange={(event) => onSearchEndDateChange(event.target.value)}
+          className="search-input"
+          aria-label="Search end date"
         />
         <button type="submit" className="search-btn">
           Search

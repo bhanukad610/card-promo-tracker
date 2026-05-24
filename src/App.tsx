@@ -25,7 +25,13 @@ function App() {
     selectedCategoryName,
     searchText,
     setSearchText,
+    searchStartDate,
+    setSearchStartDate,
+    searchEndDate,
+    setSearchEndDate,
     setActiveSearchText,
+    setActiveSearchStartDate,
+    setActiveSearchEndDate,
     isSearchMode,
   } = usePromoData()
 
@@ -58,9 +64,17 @@ function App() {
               onOpenPromoDetail={setSelectedPromoId}
               promos={promos}
               searchText={searchText}
+              searchStartDate={searchStartDate}
+              searchEndDate={searchEndDate}
               isSearchMode={isSearchMode}
               onSearchTextChange={setSearchText}
-              onSearch={() => setActiveSearchText(searchText)}
+              onSearchStartDateChange={setSearchStartDate}
+              onSearchEndDateChange={setSearchEndDate}
+              onSearch={() => {
+                setActiveSearchText(searchText)
+                setActiveSearchStartDate(searchStartDate)
+                setActiveSearchEndDate(searchEndDate)
+              }}
             />
           )}
         </section>
