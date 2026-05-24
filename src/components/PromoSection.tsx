@@ -11,6 +11,7 @@ type PromoSectionProps = {
   onLoadMorePromos: () => void
   onOpenPromoDetail: (promoId: number) => void
   promos: Promo[]
+  selectedCardType: 'all' | 'credit' | 'debit'
 }
 
 export const PromoSection = ({
@@ -23,6 +24,7 @@ export const PromoSection = ({
   onLoadMorePromos,
   onOpenPromoDetail,
   promos,
+  selectedCardType,
 }: PromoSectionProps) => {
   return (
     <section className="panel">
@@ -38,7 +40,7 @@ export const PromoSection = ({
         </div>
         <span>{promoTotal} total items</span>
       </div>
-      <p className="subtitle">Showing page {promoPage} of {promoTotalPages} for Credit card offers.</p>
+      <p className="subtitle">Showing page {promoPage} of {promoTotalPages} for {selectedCardType === 'all' ? 'all card offers' : `${selectedCardType} card offers`}.</p>
       <div className="promo-grid">
         {promos.map((promo) => (
           <article key={promo.id} className="promo-card">
