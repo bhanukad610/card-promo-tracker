@@ -4,6 +4,7 @@ import type { Category, Promo } from '../types/promo'
 import { formatCategoryName } from '../utils/formatters'
 
 export const usePromoData = () => {
+  const [selectedCardType, setSelectedCardType] = useState<'All' | 'Credit' | 'Debit'>('All')
   const [categories, setCategories] = useState<Category[]>([])
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null)
   const [promos, setPromos] = useState<Promo[]>([])
@@ -55,7 +56,12 @@ export const usePromoData = () => {
       setError(null)
 
       try {
-        const promoJson = await fetchPromosByCategory(selectedCategoryId, 1, controller.signal)
+        const promoJson = await fetchPromosByCategory(
+          selectedCategoryId,
+          1,
+          selectedCardType,
+          controller.signal,
+        )
         setPromos(promoJson.data)
         setPromoPage(promoJson.page)
         setPromoTotalPages(promoJson.totalPages)
@@ -72,7 +78,7 @@ export const usePromoData = () => {
     loadPromosForCategory()
 
     return () => controller.abort()
-  }, [selectedCategoryId])
+  }, [selectedCategoryId, selectedCardType])
 
   const canLoadMorePromos = promoPage < promoTotalPages
 
@@ -86,7 +92,12 @@ export const usePromoData = () => {
 
     try {
       const nextPage = promoPage + 1
-      const promoJson = await fetchPromosByCategory(selectedCategoryId, nextPage, controller.signal)
+      const promoJson = await fetchPromosByCategory(
+        selectedCategoryId,
+        nextPage,
+        selectedCardType,
+        controller.signal,
+      )
       setPromos((currentPromos) => [...currentPromos, ...promoJson.data])
       setPromoPage(promoJson.page)
       setPromoTotalPages(promoJson.totalPages)
@@ -98,7 +109,7 @@ export const usePromoData = () => {
     } finally {
       setLoadingPromos(false)
     }
-  }, [canLoadMorePromos, loadingPromos, promoPage, selectedCategoryId])
+  }, [canLoadMorePromos, loadingPromos, promoPage, selectedCategoryId, selectedCardType])
 
   const selectedCategoryName = useMemo(
     () =>
@@ -113,6 +124,8 @@ export const usePromoData = () => {
     categories,
     selectedCategoryId,
     setSelectedCategoryId,
+    selectedCardType,
+    setSelectedCardType,
     promos,
     promoPage,
     promoTotalPages,

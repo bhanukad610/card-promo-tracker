@@ -5,17 +5,33 @@ type CategorySectionProps = {
   categories: Category[]
   selectedCategoryId: number | null
   onSelectCategory: (id: number) => void
+  selectedCardType: 'All' | 'Credit' | 'Debit'
+  onSelectCardType: (cardType: 'All' | 'Credit' | 'Debit') => void
 }
 
 export const CategorySection = ({
   categories,
   selectedCategoryId,
   onSelectCategory,
+  selectedCardType,
+  onSelectCardType,
 }: CategorySectionProps) => (
   <section className="panel">
     <div className="panel-title-row">
       <h2>Promotion Categories</h2>
       <span>{categories.length} categories</span>
+    </div>
+    <div className="card-type-filter">
+      {(['All', 'Credit', 'Debit'] as const).map((cardType) => (
+        <button
+          key={cardType}
+          type="button"
+          className={`card-type-chip ${selectedCardType === cardType ? 'active' : ''}`}
+          onClick={() => onSelectCardType(cardType)}
+        >
+          {cardType}
+        </button>
+      ))}
     </div>
     <div className="category-grid">
       {categories.map((item) => (
