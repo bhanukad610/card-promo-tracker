@@ -1,5 +1,5 @@
 import { API_BASE } from '../constants/api'
-import type { CategoryResponse, PromoDetail, PromoResponse } from '../types/promo'
+import type { CategoryResponse, PromoDetail, PromoResponse, PromoSearchParams } from '../types/promo'
 
 export const fetchCategories = async (signal: AbortSignal): Promise<CategoryResponse> => {
   const response = await fetch(`${API_BASE}/get_all_card_promotion_categories`, {
@@ -43,6 +43,26 @@ export const fetchPromoDetail = async (promoId: number, signal: AbortSignal): Pr
 
   if (!response.ok) {
     throw new Error('Unable to fetch promotion details at the moment.')
+  }
+
+  return response.json()
+}
+
+export const searchPromos = async (
+  payload: PromoSearchParams,
+  signal: AbortSignal,
+): Promise<PromoResponse> => {
+  const response = await fetch(`${API_BASE}/search_card_promotions`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(payload),
+    signal,
+  })
+
+  if (!response.ok) {
+    throw new Error('Unable to search promotions at the moment.')
   }
 
   return response.json()
