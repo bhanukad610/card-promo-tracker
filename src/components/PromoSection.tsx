@@ -1,7 +1,5 @@
-import { useState } from 'react'
 import { FILE_BASE } from '../constants/api'
 import type { Promo } from '../types/promo'
-import { PromoDetailModal } from './PromoDetailModal'
 
 type PromoSectionProps = {
   selectedCategoryName: string
@@ -11,6 +9,7 @@ type PromoSectionProps = {
   promoTotalPages: number
   canLoadMorePromos: boolean
   onLoadMorePromos: () => void
+  onOpenPromoDetail: (promoId: number) => void
   promos: Promo[]
 }
 
@@ -22,17 +21,9 @@ export const PromoSection = ({
   promoTotalPages,
   canLoadMorePromos,
   onLoadMorePromos,
+  onOpenPromoDetail,
   promos,
 }: PromoSectionProps) => {
-  const [selectedPromoId, setSelectedPromoId] = useState<number | null>(null)
-  const openPromoDetail = (promoId: number) => {
-    setSelectedPromoId(promoId)
-  }
-
-  const closePromoDetail = () => {
-    setSelectedPromoId(null)
-  }
-
   return (
     <section className="panel">
       <div className="panel-title-row">
@@ -65,7 +56,7 @@ export const PromoSection = ({
                 <span>Valid till {promo.to}</span>
               </div>
             </div>
-            <button type="button" className="view-more-btn" onClick={() => openPromoDetail(promo.id)}>
+            <button type="button" className="view-more-btn" onClick={() => onOpenPromoDetail(promo.id)}>
               View more
             </button>
           </article>
@@ -76,7 +67,6 @@ export const PromoSection = ({
           {isLoading ? 'Loading more...' : 'Load more'}
         </button>
       )}
-      {selectedPromoId !== null && <PromoDetailModal promoId={selectedPromoId} onClose={closePromoDetail} />}
     </section>
   )
 }

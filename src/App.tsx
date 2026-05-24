@@ -1,9 +1,12 @@
+import { useState } from 'react'
 import './App.css'
 import { CategorySection } from './components/CategorySection'
+import { PromoDetailModal } from './components/PromoDetailModal'
 import { PromoSection } from './components/PromoSection'
 import { usePromoData } from './hooks/usePromoData'
 
 function App() {
+  const [selectedPromoId, setSelectedPromoId] = useState<number | null>(null)
   const {
     categories,
     selectedCategoryId,
@@ -44,10 +47,14 @@ function App() {
               promoTotalPages={promoTotalPages}
               canLoadMorePromos={canLoadMorePromos}
               onLoadMorePromos={loadMorePromos}
+              onOpenPromoDetail={setSelectedPromoId}
               promos={promos}
             />
           )}
         </>
+      )}
+      {selectedPromoId !== null && (
+        <PromoDetailModal promoId={selectedPromoId} onClose={() => setSelectedPromoId(null)} />
       )}
     </main>
   )

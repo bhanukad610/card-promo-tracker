@@ -220,17 +220,25 @@
   border-radius: 16px;
   background: #fff;
   padding: 1.25rem;
+  box-shadow: 0 35px 80px -28px rgba(15, 23, 42, 0.45);
 }
 
 .promo-modal-close {
   position: absolute;
-  top: 0.6rem;
-  right: 0.7rem;
-  border: 0;
-  background: transparent;
-  font-size: 1.7rem;
+  top: 0.85rem;
+  right: 0.85rem;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  background: #fff;
+  color: #111827;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 999px;
+  font-size: 1.4rem;
   line-height: 1;
   cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .promo-detail-content {

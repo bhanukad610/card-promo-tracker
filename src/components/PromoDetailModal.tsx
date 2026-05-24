@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { fetchPromoDetail } from '../api/promos'
 import type { PromoDetail } from '../types/promo'
 
@@ -36,7 +37,23 @@ export const PromoDetailModal = ({ promoId, onClose }: PromoDetailModalProps) =>
     return () => controller.abort()
   }, [promoId])
 
-  return (
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        onClose()
+      }
+    }
+
+    document.body.style.overflow = 'hidden'
+    window.addEventListener('keydown', handleKeyDown)
+
+    return () => {
+      document.body.style.overflow = ''
+      window.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [onClose])
+
+  return createPortal(
     <div className="promo-modal-backdrop" role="presentation" onClick={onClose}>
       <div
         className="promo-modal"
@@ -45,7 +62,7 @@ export const PromoDetailModal = ({ promoId, onClose }: PromoDetailModalProps) =>
         aria-labelledby="promo-modal-title"
         onClick={(event) => event.stopPropagation()}
       >
-        <button type="button" className="promo-modal-close" onClick={onClose}>
+        <button type="button" className="promo-modal-close" aria-label="Close promotion details" onClick={onClose}>
           ×
         </button>
         {detailLoading && <p>Loading promotion details...</p>}
@@ -59,6 +76,7 @@ export const PromoDetailModal = ({ promoId, onClose }: PromoDetailModalProps) =>
           </>
         )}
       </div>
-    </div>
+    </div>,
+    document.body,
   )
 }
