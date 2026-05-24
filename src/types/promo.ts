@@ -25,3 +25,15 @@ export type PromoResponse = {
   total: number
   data: Promo[]
 }
+
+export type PromoDetail = {
+  title: string
+  thumb: string
+  from: string
+  to: string
+  valid: string
+  cardType: string
+  content: string
+  merchant: string
+  assets: string[]
+}

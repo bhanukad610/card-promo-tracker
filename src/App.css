@@ -161,6 +161,7 @@
 }
 
 .promo-card {
+  position: relative;
   display: flex;
   gap: 0.85rem;
   padding: 0.95rem;
@@ -175,6 +176,66 @@
   transform: translateY(-2px);
   border-color: rgba(109, 40, 217, 0.18);
   box-shadow: 0 22px 40px -30px rgba(109, 40, 217, 0.25);
+}
+
+.view-more-btn {
+  position: absolute;
+  right: 0.95rem;
+  bottom: 0.95rem;
+  border: 1px solid rgba(109, 40, 217, 0.32);
+  background: rgba(255, 255, 255, 0.96);
+  color: #5b21b6;
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  cursor: pointer;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+.promo-card:hover .view-more-btn,
+.promo-card:focus-within .view-more-btn {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.promo-modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  z-index: 1000;
+}
+
+.promo-modal {
+  position: relative;
+  width: min(850px, 100%);
+  max-height: 85vh;
+  overflow: auto;
+  border-radius: 16px;
+  background: #fff;
+  padding: 1.25rem;
+}
+
+.promo-modal-close {
+  position: absolute;
+  top: 0.6rem;
+  right: 0.7rem;
+  border: 0;
+  background: transparent;
+  font-size: 1.7rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.promo-detail-content {
+  color: #1f2937;
+  line-height: 1.5;
 }
 
 .promo-thumb {
