@@ -28,10 +28,10 @@ export type PromoResponse = {
 }
 
 export type PromoSearchParams = {
-  query: string
-  startDate: string
-  endDate: string
-  cardType: 'credit' | 'debit'
+  query?: string
+  startDate?: string
+  endDate?: string
+  cardType?: 'credit' | 'debit'
   page: number
   limit: number
 }

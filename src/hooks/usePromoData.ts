@@ -10,7 +10,11 @@ const formatDate = (date: Date) => date.toISOString().split('T')[0]
 export const usePromoData = () => {
   const [selectedCardType, setSelectedCardType] = useState<'All' | 'Credit' | 'Debit'>('All')
   const [searchText, setSearchText] = useState('')
+  const [searchStartDate, setSearchStartDate] = useState(formatDate(new Date()))
+  const [searchEndDate, setSearchEndDate] = useState(formatDate(new Date(Date.now() + 1000 * 60 * 60 * 24 * 90)))
   const [activeSearchText, setActiveSearchText] = useState('')
+  const [activeSearchStartDate, setActiveSearchStartDate] = useState(searchStartDate)
+  const [activeSearchEndDate, setActiveSearchEndDate] = useState(searchEndDate)
   const [categories, setCategories] = useState<Category[]>([])
   const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null)
   const [promos, setPromos] = useState<Promo[]>([])
@@ -22,18 +26,18 @@ export const usePromoData = () => {
   const [error, setError] = useState<string | null>(null)
 
   const normalizedSearchText = activeSearchText.trim().toLowerCase()
-  const isSearchMode = normalizedSearchText.length > 0 && selectedCardType !== 'All'
+  const isSearchMode = normalizedSearchText.length > 0 || Boolean(activeSearchStartDate) || Boolean(activeSearchEndDate)
 
   const buildSearchPayload = useCallback(
     (page: number): PromoSearchParams => ({
-      query: normalizedSearchText,
-      startDate: formatDate(new Date()),
-      endDate: formatDate(new Date(Date.now() + 1000 * 60 * 60 * 24 * 90)),
-      cardType: selectedCardType.toLowerCase() as 'credit' | 'debit',
+      query: normalizedSearchText || undefined,
+      startDate: activeSearchStartDate || undefined,
+      endDate: activeSearchEndDate || undefined,
+      cardType: selectedCardType === 'All' ? undefined : (selectedCardType.toLowerCase() as 'credit' | 'debit'),
       page,
       limit: SEARCH_PAGE_SIZE,
     }),
-    [normalizedSearchText, selectedCardType],
+    [activeSearchEndDate, activeSearchStartDate, normalizedSearchText, selectedCardType],
   )
 
   useEffect(() => {
@@ -169,8 +173,14 @@ export const usePromoData = () => {
     selectedCategoryName,
     searchText,
     setSearchText,
+    searchStartDate,
+    setSearchStartDate,
+    searchEndDate,
+    setSearchEndDate,
     activeSearchText,
     setActiveSearchText,
+    setActiveSearchStartDate,
+    setActiveSearchEndDate,
     isSearchMode,
   }
 }
