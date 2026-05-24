@@ -32,7 +32,7 @@ function App() {
       </header>
 
       {!loadingCategories && !error && (
-        <>
+        <section className="page-content">
           <CategorySection
             categories={categories}
             selectedCategoryId={selectedCategoryId}
@@ -51,7 +51,7 @@ function App() {
               promos={promos}
             />
           )}
-        </>
+        </section>
       )}
       {selectedPromoId !== null && (
         <PromoDetailModal promoId={selectedPromoId} onClose={() => setSelectedPromoId(null)} />
