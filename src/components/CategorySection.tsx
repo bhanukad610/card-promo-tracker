@@ -19,7 +19,6 @@ export const CategorySection = ({
   <section className="panel">
     <div className="panel-title-row">
       <h2>Promotion Categories</h2>
-      <span>{categories.length} categories</span>
     </div>
     <div className="card-type-filter">
       {(['All', 'Credit', 'Debit'] as const).map((cardType) => (
