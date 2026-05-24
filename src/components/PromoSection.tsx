@@ -1,5 +1,7 @@
+import { useState } from 'react'
 import { FILE_BASE } from '../constants/api'
 import type { Promo } from '../types/promo'
+import { PromoDetailModal } from './PromoDetailModal'
 
 type PromoSectionProps = {
   selectedCategoryName: string
@@ -21,47 +23,60 @@ export const PromoSection = ({
   canLoadMorePromos,
   onLoadMorePromos,
   promos,
-}: PromoSectionProps) => (
-  <section className="panel">
-    <div className="panel-title-row">
-      <div className="results-heading">
-        <h2>{selectedCategoryName} Promotions</h2>
-        {isLoading && (
-          <span className="loading-indicator" aria-live="polite" aria-busy="true">
-            <span className="loading-spinner" aria-hidden="true" />
-            Loading...
-          </span>
-        )}
+}: PromoSectionProps) => {
+  const [selectedPromoId, setSelectedPromoId] = useState<number | null>(null)
+  const openPromoDetail = (promoId: number) => {
+    setSelectedPromoId(promoId)
+  }
+
+  const closePromoDetail = () => {
+    setSelectedPromoId(null)
+  }
+
+  return (
+    <section className="panel">
+      <div className="panel-title-row">
+        <div className="results-heading">
+          <h2>{selectedCategoryName} Promotions</h2>
+          {isLoading && (
+            <span className="loading-indicator" aria-live="polite" aria-busy="true">
+              <span className="loading-spinner" aria-hidden="true" />
+              Loading...
+            </span>
+          )}
+        </div>
+        <span>{promoTotal} total items</span>
       </div>
-      <span>{promoTotal} total items</span>
-    </div>
-    <p className="subtitle">
-      Showing page {promoPage} of {promoTotalPages} for Credit card offers.
-    </p>
-    <div className="promo-grid">
-      {promos.map((promo) => (
-        <article key={promo.id} className="promo-card">
-          <img
-            src={`${FILE_BASE}${promo.thumb}`}
-            alt={`${promo.merchant} logo`}
-            className="promo-thumb"
-            loading="lazy"
-          />
-          <div className="promo-body">
-            <p className="promo-merchant">{promo.merchant}</p>
-            <h3>{promo.title}</h3>
-            <div className="promo-meta">
-              <span className="badge">{promo.cardType.toUpperCase()}</span>
-              <span>Valid till {promo.to}</span>
+      <p className="subtitle">Showing page {promoPage} of {promoTotalPages} for Credit card offers.</p>
+      <div className="promo-grid">
+        {promos.map((promo) => (
+          <article key={promo.id} className="promo-card">
+            <img
+              src={`${FILE_BASE}${promo.thumb}`}
+              alt={`${promo.merchant} logo`}
+              className="promo-thumb"
+              loading="lazy"
+            />
+            <div className="promo-body">
+              <p className="promo-merchant">{promo.merchant}</p>
+              <h3>{promo.title}</h3>
+              <div className="promo-meta">
+                <span className="badge">{promo.cardType.toUpperCase()}</span>
+                <span>Valid till {promo.to}</span>
+              </div>
             </div>
-          </div>
-        </article>
-      ))}
-    </div>
-    {canLoadMorePromos && (
-      <button type="button" className="load-more-btn" onClick={onLoadMorePromos} disabled={isLoading}>
-        {isLoading ? 'Loading more...' : 'Load more'}
-      </button>
-    )}
-  </section>
-)
+            <button type="button" className="view-more-btn" onClick={() => openPromoDetail(promo.id)}>
+              View more
+            </button>
+          </article>
+        ))}
+      </div>
+      {canLoadMorePromos && (
+        <button type="button" className="load-more-btn" onClick={onLoadMorePromos} disabled={isLoading}>
+          {isLoading ? 'Loading more...' : 'Load more'}
+        </button>
+      )}
+      {selectedPromoId !== null && <PromoDetailModal promoId={selectedPromoId} onClose={closePromoDetail} />}
+    </section>
+  )
+}
