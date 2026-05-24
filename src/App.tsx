@@ -23,6 +23,14 @@ function App() {
     loadingPromos,
     error,
     selectedCategoryName,
+    searchText,
+    setSearchText,
+    setActiveSearchText,
+    searchStartDate,
+    setSearchStartDate,
+    searchEndDate,
+    setSearchEndDate,
+    isSearchMode,
   } = usePromoData()
 
   const isLoading = loadingCategories || (selectedCategoryId !== null && loadingPromos)
@@ -43,7 +51,7 @@ function App() {
             onSelectCardType={setSelectedCardType}
           />
           {!error && (
-            <PromoSection
+          <PromoSection
               selectedCategoryName={selectedCategoryName}
               isLoading={isLoading}
               promoTotal={promoTotal}
@@ -53,6 +61,14 @@ function App() {
               onLoadMorePromos={loadMorePromos}
               onOpenPromoDetail={setSelectedPromoId}
               promos={promos}
+              searchText={searchText}
+              searchStartDate={searchStartDate}
+              searchEndDate={searchEndDate}
+              isSearchMode={isSearchMode}
+              onSearchTextChange={setSearchText}
+              onSearchStartDateChange={setSearchStartDate}
+              onSearchEndDateChange={setSearchEndDate}
+              onSearch={() => setActiveSearchText(searchText)}
             />
           )}
         </section>

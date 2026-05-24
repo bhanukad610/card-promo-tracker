@@ -21,9 +21,19 @@ export type Promo = {
 
 export type PromoResponse = {
   page: number
+  limit?: number
   totalPages: number
   total: number
   data: Promo[]
+}
+
+export type PromoSearchParams = {
+  query: string
+  startDate: string
+  endDate: string
+  cardType: 'all' | 'credit' | 'debit'
+  page: number
+  limit: number
 }
 
 export type PromoDetail = {

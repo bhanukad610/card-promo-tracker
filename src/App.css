@@ -143,6 +143,37 @@
   margin: 0;
 }
 
+.search-form {
+  display: flex;
+  gap: 0.65rem;
+  margin-bottom: 0.9rem;
+  flex-wrap: wrap;
+}
+
+.search-input {
+  flex: 1 1 280px;
+  border: 1px solid rgba(109, 40, 217, 0.22);
+  border-radius: 12px;
+  padding: 0.6rem 0.75rem;
+}
+
+.search-date-input {
+  border: 1px solid rgba(109, 40, 217, 0.22);
+  border-radius: 12px;
+  padding: 0.6rem 0.65rem;
+  min-width: 150px;
+}
+
+.search-btn {
+  border: 1px solid rgba(109, 40, 217, 0.35);
+  background: #6d28d9;
+  color: #fff;
+  border-radius: 12px;
+  padding: 0.6rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
 .loading-indicator {
   display: inline-flex;
   align-items: center;
