@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import { CategorySection } from './components/CategorySection'
 import { PromoDetailModal } from './components/PromoDetailModal'
@@ -7,6 +7,12 @@ import { usePromoData } from './hooks/usePromoData'
 
 function App() {
   const [selectedPromoId, setSelectedPromoId] = useState<number | null>(null)
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem('theme')
+    if (savedTheme === 'dark') return true
+    if (savedTheme === 'light') return false
+    return window.matchMedia('(prefers-color-scheme: dark)').matches
+  })
   const {
     categories,
     selectedCategoryId,
@@ -38,10 +44,24 @@ function App() {
 
   const isLoading = loadingCategories || (selectedCategoryId !== null && loadingPromos)
 
+  useEffect(() => {
+    localStorage.setItem('theme', isDarkMode ? 'dark' : 'light')
+  }, [isDarkMode])
+
   return (
-    <main className="page">
+    <main className={`page ${isDarkMode ? 'dark-mode' : ''}`}>
       <header className="page-header">
-        <h1>HNB Card Promotions</h1>
+        <div className="header-row">
+          <h1>HNB Card Promotions</h1>
+          <button
+            className="theme-toggle-btn"
+            type="button"
+            onClick={() => setIsDarkMode((prev) => !prev)}
+            aria-label={isDarkMode ? 'Switch to light mode' : 'Switch to dark mode'}
+          >
+            {isDarkMode ? '☀️ Light mode' : '🌙 Dark mode'}
+          </button>
+        </div>
       </header>
 
       {!loadingCategories && !error && (
