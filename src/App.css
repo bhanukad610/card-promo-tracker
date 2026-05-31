@@ -11,6 +11,10 @@
   --chip-bg: #f8f5ff;
   --chip-color: #5b21b6;
   --card-bg: #fcfcfd;
+  --category-card-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.96) 100%);
+  --category-card-hover-bg: linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(245, 243, 255, 0.95) 100%);
+  --category-card-active-bg: linear-gradient(180deg, rgba(245, 243, 255, 0.98) 0%, rgba(237, 233, 254, 0.92) 100%);
+  --category-card-active-color: #4c1d95;
   --input-bg: rgba(255, 255, 255, 0.92);
   --secondary-btn-bg: #fff;
   --secondary-btn-color: #5b21b6;
@@ -35,6 +39,10 @@
   --chip-bg: rgba(109, 40, 217, 0.2);
   --chip-color: #ddd6fe;
   --card-bg: rgba(30, 41, 59, 0.75);
+  --category-card-bg: linear-gradient(180deg, rgba(30, 41, 59, 0.96) 0%, rgba(15, 23, 42, 0.98) 100%);
+  --category-card-hover-bg: linear-gradient(180deg, rgba(51, 65, 85, 0.98) 0%, rgba(30, 41, 59, 0.96) 100%);
+  --category-card-active-bg: linear-gradient(180deg, rgba(76, 29, 149, 0.58) 0%, rgba(49, 46, 129, 0.82) 100%);
+  --category-card-active-color: #f5f3ff;
   --input-bg: rgba(30, 41, 59, 0.9);
   --secondary-btn-bg: rgba(30, 41, 59, 0.92);
   --secondary-btn-color: #ddd6fe;
@@ -447,8 +455,7 @@
   text-align: left;
   cursor: pointer;
   padding: 1rem;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.96) 100%);
+  background: var(--category-card-bg);
   box-shadow: 0 10px 24px -20px rgba(15, 23, 42, 0.5);
   transition:
     border-color 0.2s ease,
@@ -459,8 +466,7 @@
 
 .category-card:hover {
   border-color: #c4b5fd;
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(245, 243, 255, 0.95) 100%);
+  background: var(--category-card-hover-bg);
   box-shadow: 0 18px 36px -24px rgba(109, 40, 217, 0.5);
   transform: translateY(-2px);
 }
@@ -470,12 +476,11 @@
   box-shadow:
     0 0 0 2px rgba(124, 58, 237, 0.12),
     0 20px 40px -28px rgba(124, 58, 237, 0.65);
-  background:
-    linear-gradient(180deg, rgba(245, 243, 255, 0.98) 0%, rgba(237, 233, 254, 0.92) 100%);
+  background: var(--category-card-active-bg);
 }
 
 .category-card.active .category-name {
-  color: #4c1d95;
+  color: var(--category-card-active-color);
 }
 
 .category-card:focus-visible {
