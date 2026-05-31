@@ -1,14 +1,17 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { fetchPromoDetail } from '../api/promos'
-import type { PromoDetail } from '../types/promo'
+import type { Promo, PromoDetail } from '../types/promo'
 
 type PromoDetailModalProps = {
   promoId: number
+  promo?: Promo
+  isSaved: boolean
+  onToggleSaved?: () => void
   onClose: () => void
 }
 
-export const PromoDetailModal = ({ promoId, onClose }: PromoDetailModalProps) => {
+export const PromoDetailModal = ({ promoId, promo, isSaved, onToggleSaved, onClose }: PromoDetailModalProps) => {
   const [detail, setDetail] = useState<PromoDetail | null>(null)
   const [detailLoading, setDetailLoading] = useState(false)
   const [detailError, setDetailError] = useState<string | null>(null)
@@ -69,8 +72,22 @@ export const PromoDetailModal = ({ promoId, onClose }: PromoDetailModalProps) =>
         {detailError && <p className="status error">{detailError}</p>}
         {!detailLoading && !detailError && detail && (
           <>
-            <h3 id="promo-modal-title">{detail.title}</h3>
-            <p className="promo-merchant">{detail.merchant}</p>
+            <div className="promo-modal-header">
+              <div>
+                <h3 id="promo-modal-title">{detail.title}</h3>
+                <p className="promo-merchant">{detail.merchant}</p>
+              </div>
+              {promo && onToggleSaved && (
+                <button
+                  type="button"
+                  className={`modal-save-btn${isSaved ? ' saved' : ''}`}
+                  onClick={onToggleSaved}
+                  aria-pressed={isSaved}
+                >
+                  {isSaved ? '♥ Saved' : '♡ Save for later'}
+                </button>
+              )}
+            </div>
             <p className="subtitle">{detail.valid || `Valid From ${detail.from} to ${detail.to}`}</p>
             <div className="promo-detail-content" dangerouslySetInnerHTML={{ __html: detail.content }} />
           </>

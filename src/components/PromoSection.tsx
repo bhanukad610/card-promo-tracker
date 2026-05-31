@@ -12,6 +12,11 @@ type PromoSectionProps = {
   onLoadMorePromos: () => void
   onOpenPromoDetail: (promoId: number) => void
   promos: Promo[]
+  savedPromoIds: Set<number>
+  savedOfferCount: number
+  isSavedView: boolean
+  onToggleSavedView: () => void
+  onToggleSavedPromo: (promo: Promo) => void
   searchText: string
   searchStartDate: string
   searchEndDate: string
@@ -33,6 +38,11 @@ export const PromoSection = ({
   onLoadMorePromos,
   onOpenPromoDetail,
   promos,
+  savedPromoIds,
+  savedOfferCount,
+  isSavedView,
+  onToggleSavedView,
+  onToggleSavedPromo,
   searchText,
   searchStartDate,
   searchEndDate,
@@ -49,83 +59,120 @@ export const PromoSection = ({
   }
 
   const canClearFilters = isSearchMode || Boolean(searchText.trim()) || Boolean(searchStartDate) || Boolean(searchEndDate)
+  const visibleTotal = isSavedView ? savedOfferCount : promoTotal
+  const headingText = isSavedView ? 'Saved Offers' : `${selectedCategoryName} Promotions`
+  const resultsSummary = isSavedView
+    ? 'Review the offers you saved for later.'
+    : `Showing page ${promoPage} of ${promoTotalPages} ${
+        isSearchMode ? 'from search results.' : 'for selected category offers.'
+      }`
 
   return (
     <section className="panel">
-      <form className="search-form" onSubmit={handleSubmit}>
-        <input
-          type="search"
-          value={searchText}
-          onChange={(event) => onSearchTextChange(event.target.value)}
-          placeholder="Search promotions by location, merchant, or keyword"
-          className="search-input"
-        />
-        <input
-          type="date"
-          value={searchStartDate}
-          onChange={(event) => onSearchStartDateChange(event.target.value)}
-          className="search-input"
-          aria-label="Search start date"
-        />
-        <input
-          type="date"
-          value={searchEndDate}
-          onChange={(event) => onSearchEndDateChange(event.target.value)}
-          className="search-input"
-          aria-label="Search end date"
-        />
-        <button type="submit" className="search-btn">
-          Search
-        </button>
+      <div className="promo-actions-row">
+        <form className="search-form" onSubmit={handleSubmit} aria-label="Search promotions">
+          <input
+            type="search"
+            value={searchText}
+            onChange={(event) => onSearchTextChange(event.target.value)}
+            placeholder="Search promotions by location, merchant, or keyword"
+            className="search-input"
+            disabled={isSavedView}
+          />
+          <input
+            type="date"
+            value={searchStartDate}
+            onChange={(event) => onSearchStartDateChange(event.target.value)}
+            className="search-input"
+            aria-label="Search start date"
+            disabled={isSavedView}
+          />
+          <input
+            type="date"
+            value={searchEndDate}
+            onChange={(event) => onSearchEndDateChange(event.target.value)}
+            className="search-input"
+            aria-label="Search end date"
+            disabled={isSavedView}
+          />
+          <button type="submit" className="search-btn" disabled={isSavedView}>
+            Search
+          </button>
+          <button
+            type="button"
+            className="search-btn search-btn-secondary"
+            onClick={onClearSearchFilters}
+            disabled={isSavedView || !canClearFilters}
+          >
+            Clear filters
+          </button>
+        </form>
         <button
           type="button"
-          className="search-btn search-btn-secondary"
-          onClick={onClearSearchFilters}
-          disabled={!canClearFilters}
+          className={`saved-view-toggle${isSavedView ? ' active' : ''}`}
+          onClick={onToggleSavedView}
+          aria-pressed={isSavedView}
         >
-          Clear filters
+          ♥ Saved offers ({savedOfferCount})
         </button>
-      </form>
+      </div>
       <div className="panel-title-row">
         <div className="results-heading">
-          <h2>{selectedCategoryName} Promotions</h2>
-          {isLoading && (
+          <h2>{headingText}</h2>
+          {isLoading && !isSavedView && (
             <span className="loading-indicator" aria-live="polite" aria-busy="true">
               <span className="loading-spinner" aria-hidden="true" />
               Loading...
             </span>
           )}
         </div>
-        <span>{promoTotal} total items</span>
+        <span>{visibleTotal} total items</span>
       </div>
-      <p className="subtitle">
-        Showing page {promoPage} of {promoTotalPages}{' '}
-        {isSearchMode ? 'from search results.' : 'for selected category offers.'}
-      </p>
-      <div className="promo-grid">
-        {promos.map((promo) => (
-          <article key={promo.id} className="promo-card">
-            <img
-              src={`${FILE_BASE}${promo.thumb}`}
-              alt={`${promo.merchant} logo`}
-              className="promo-thumb"
-              loading="lazy"
-            />
-            <div className="promo-body">
-              <p className="promo-merchant">{promo.merchant}</p>
-              <h3>{promo.title}</h3>
-              <div className="promo-meta">
-                <span className="badge">{promo.cardType.toUpperCase()}</span>
-                <span>Valid till {promo.to}</span>
-              </div>
-            </div>
-            <button type="button" className="view-more-btn" onClick={() => onOpenPromoDetail(promo.id)}>
-              View more
-            </button>
-          </article>
-        ))}
-      </div>
-      {canLoadMorePromos && (
+      <p className="subtitle">{resultsSummary}</p>
+      {promos.length > 0 ? (
+        <div className="promo-grid">
+          {promos.map((promo) => {
+            const isSaved = savedPromoIds.has(promo.id)
+
+            return (
+              <article key={promo.id} className="promo-card">
+                <button
+                  type="button"
+                  className={`save-offer-btn${isSaved ? ' saved' : ''}`}
+                  onClick={() => onToggleSavedPromo(promo)}
+                  aria-pressed={isSaved}
+                  aria-label={isSaved ? `Unsave ${promo.title}` : `Save ${promo.title}`}
+                >
+                  {isSaved ? '♥ Saved' : '♡ Save'}
+                </button>
+                <img
+                  src={`${FILE_BASE}${promo.thumb}`}
+                  alt={`${promo.merchant} logo`}
+                  className="promo-thumb"
+                  loading="lazy"
+                />
+                <div className="promo-body">
+                  <p className="promo-merchant">{promo.merchant}</p>
+                  <h3>{promo.title}</h3>
+                  <div className="promo-meta">
+                    <span className="badge">{promo.cardType.toUpperCase()}</span>
+                    <span>Valid till {promo.to}</span>
+                  </div>
+                </div>
+                <button type="button" className="view-more-btn" onClick={() => onOpenPromoDetail(promo.id)}>
+                  View more
+                </button>
+              </article>
+            )
+          })}
+        </div>
+      ) : (
+        <div className="empty-state">
+          <p>{isSavedView ? 'No saved offers yet.' : 'No promotions found.'}</p>
+          {isSavedView && <span>Tap “♡ Save” on any offer to keep it here for later.</span>}
+        </div>
+      )}
+      {!isSavedView && canLoadMorePromos && (
         <button type="button" className="load-more-btn" onClick={onLoadMorePromos} disabled={isLoading}>
           {isLoading ? 'Loading more...' : 'Load more'}
         </button>

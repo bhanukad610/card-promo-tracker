@@ -4,9 +4,11 @@ import { CategorySection } from './components/CategorySection'
 import { PromoDetailModal } from './components/PromoDetailModal'
 import { PromoSection } from './components/PromoSection'
 import { usePromoData } from './hooks/usePromoData'
+import { useSavedPromos } from './hooks/useSavedPromos'
 
 function App() {
   const [selectedPromoId, setSelectedPromoId] = useState<number | null>(null)
+  const [showSavedOffers, setShowSavedOffers] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const savedTheme = localStorage.getItem('theme')
     if (savedTheme === 'dark') return true
@@ -41,8 +43,18 @@ function App() {
     clearSearchFilters,
     isSearchMode,
   } = usePromoData()
+  const { savedPromos, savedPromoIds, toggleSavedPromo } = useSavedPromos()
 
-  const isLoading = loadingCategories || (selectedCategoryId !== null && loadingPromos)
+  const displayedPromos = showSavedOffers ? savedPromos : promos
+  const selectedPromo =
+    displayedPromos.find((promo) => promo.id === selectedPromoId) ??
+    promos.find((promo) => promo.id === selectedPromoId) ??
+    savedPromos.find((promo) => promo.id === selectedPromoId)
+
+  const displayPromoTotal = showSavedOffers ? savedPromos.length : promoTotal
+  const displayPromoPage = showSavedOffers ? 1 : promoPage
+  const displayPromoTotalPages = showSavedOffers ? 1 : promoTotalPages
+  const isLoading = !showSavedOffers && (loadingCategories || (selectedCategoryId !== null && loadingPromos))
 
   useEffect(() => {
     localStorage.setItem('theme', isDarkMode ? 'dark' : 'light')
@@ -69,21 +81,32 @@ function App() {
           <CategorySection
             categories={categories}
             selectedCategoryId={selectedCategoryId}
-            onSelectCategory={setSelectedCategoryId}
+            onSelectCategory={(categoryId) => {
+              setShowSavedOffers(false)
+              setSelectedCategoryId(categoryId)
+            }}
             selectedCardType={selectedCardType}
-            onSelectCardType={setSelectedCardType}
+            onSelectCardType={(cardType) => {
+              setShowSavedOffers(false)
+              setSelectedCardType(cardType)
+            }}
           />
           {!error && (
-          <PromoSection
+            <PromoSection
               selectedCategoryName={selectedCategoryName}
               isLoading={isLoading}
-              promoTotal={promoTotal}
-              promoPage={promoPage}
-              promoTotalPages={promoTotalPages}
-              canLoadMorePromos={canLoadMorePromos}
+              promoTotal={displayPromoTotal}
+              promoPage={displayPromoPage}
+              promoTotalPages={displayPromoTotalPages}
+              canLoadMorePromos={!showSavedOffers && canLoadMorePromos}
               onLoadMorePromos={loadMorePromos}
               onOpenPromoDetail={setSelectedPromoId}
-              promos={promos}
+              promos={displayedPromos}
+              savedPromoIds={savedPromoIds}
+              savedOfferCount={savedPromos.length}
+              isSavedView={showSavedOffers}
+              onToggleSavedView={() => setShowSavedOffers((prev) => !prev)}
+              onToggleSavedPromo={toggleSavedPromo}
               searchText={searchText}
               searchStartDate={searchStartDate}
               searchEndDate={searchEndDate}
@@ -93,6 +116,7 @@ function App() {
               onSearchEndDateChange={setSearchEndDate}
               onClearSearchFilters={clearSearchFilters}
               onSearch={() => {
+                setShowSavedOffers(false)
                 setActiveSearchText(searchText)
                 setActiveSearchStartDate(searchStartDate)
                 setActiveSearchEndDate(searchEndDate)
@@ -102,7 +126,13 @@ function App() {
         </section>
       )}
       {selectedPromoId !== null && (
-        <PromoDetailModal promoId={selectedPromoId} onClose={() => setSelectedPromoId(null)} />
+        <PromoDetailModal
+          promoId={selectedPromoId}
+          promo={selectedPromo}
+          isSaved={savedPromoIds.has(selectedPromoId)}
+          onToggleSaved={selectedPromo ? () => toggleSavedPromo(selectedPromo) : undefined}
+          onClose={() => setSelectedPromoId(null)}
+        />
       )}
     </main>
   )
