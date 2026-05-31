@@ -10,6 +10,8 @@
   --panel-bg: rgba(255, 255, 255, 0.88);
   --chip-bg: #f8f5ff;
   --chip-color: #5b21b6;
+  --badge-bg: #ede9fe;
+  --badge-color: #4c1d95;
   --card-bg: #fcfcfd;
   --category-card-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(248, 250, 252, 0.96) 100%);
   --category-card-hover-bg: linear-gradient(180deg, rgba(255, 255, 255, 1) 0%, rgba(245, 243, 255, 0.95) 100%);
@@ -38,6 +40,8 @@
   --panel-bg: rgba(15, 23, 42, 0.78);
   --chip-bg: rgba(109, 40, 217, 0.2);
   --chip-color: #ddd6fe;
+  --badge-bg: rgba(196, 181, 253, 0.22);
+  --badge-color: #ede9fe;
   --card-bg: rgba(30, 41, 59, 0.75);
   --category-card-bg: linear-gradient(180deg, rgba(30, 41, 59, 0.96) 0%, rgba(15, 23, 42, 0.98) 100%);
   --category-card-hover-bg: linear-gradient(180deg, rgba(51, 65, 85, 0.98) 0%, rgba(30, 41, 59, 0.96) 100%);
@@ -410,8 +414,8 @@
 
 .badge {
   border-radius: 999px;
-  background: var(--accent-soft);
-  color: #5b21b6;
+  background: var(--badge-bg);
+  color: var(--badge-color);
   padding: 0.2rem 0.58rem;
   font-size: 0.75rem;
   font-weight: 700;
