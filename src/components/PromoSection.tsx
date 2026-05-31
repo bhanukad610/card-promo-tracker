@@ -143,7 +143,18 @@ export const PromoSection = ({
                   aria-pressed={isSaved}
                   aria-label={isSaved ? `Unsave ${promo.title}` : `Save ${promo.title}`}
                 >
-                  {isSaved ? '♥ Saved' : '♡ Save'}
+                  <svg
+                    aria-hidden="true"
+                    className="save-offer-icon"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  >
+                    <path d="M20.8 4.6c-1.6-1.6-4.1-1.6-5.7 0L12 7.7 8.9 4.6C7.3 3 4.8 3 3.2 4.6s-1.6 4.1 0 5.7L12 19.1l8.8-8.8c1.6-1.6 1.6-4.1 0-5.7Z" />
+                  </svg>
                 </button>
                 <img
                   src={`${FILE_BASE}${promo.thumb}`}
