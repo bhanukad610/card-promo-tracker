@@ -150,30 +150,6 @@ const normalizeSampathPromo = (promo: SampathPromo): Promo => {
   }
 }
 
-const matchesSearch = (promo: Promo, payload: PromoSearchParams) => {
-  const query = payload.query?.trim().toLowerCase()
-  const queryMatches = query
-    ? [promo.title, promo.merchant, promo.cardType, promo.to, promo.valid, stripHtml(promo.detail?.content)].some((value) =>
-        value.toLowerCase().includes(query),
-      )
-    : true
-
-  return queryMatches
-}
-
-const paginatePromos = (promos: Promo[], page: number, limit: number): PromoResponse => {
-  const totalPages = Math.max(1, Math.ceil(promos.length / limit))
-  const start = (page - 1) * limit
-
-  return {
-    page,
-    limit,
-    totalPages,
-    total: promos.length,
-    data: promos.slice(start, start + limit),
-  }
-}
-
 export const fetchCategories = async (bankId: BankId, signal: AbortSignal): Promise<CategoryResponse> => {
   const bank = getBank(bankId)
 
@@ -297,13 +273,7 @@ export const searchPromos = async (
   const bank = getBank(bankId)
 
   if (bankId === 'sampath') {
-    const categories = await fetchCategories('sampath', signal)
-    const promoGroups = await Promise.all(
-      categories.data.map((category) => fetchPromosByCategory('sampath', category.id, 1, 'All', signal)),
-    )
-    const promos = promoGroups.flatMap((group) => group.data).filter((promo) => matchesSearch(promo, payload))
-
-    return paginatePromos(promos, payload.page, payload.limit)
+    throw new Error('Sampath does not support promotion search.')
   }
 
   const response = await fetch(`${bank.apiBase}/search_card_promotions`, {

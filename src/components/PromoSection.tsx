@@ -31,6 +31,7 @@ type PromoSectionProps = {
   searchStartDate: string
   searchEndDate: string
   isSearchMode: boolean
+  searchDisabled: boolean
   onSearchTextChange: (value: string) => void
   onSearchStartDateChange: (value: string) => void
   onSearchEndDateChange: (value: string) => void
@@ -58,6 +59,7 @@ export const PromoSection = ({
   searchStartDate,
   searchEndDate,
   isSearchMode,
+  searchDisabled,
   onSearchTextChange,
   onSearchStartDateChange,
   onSearchEndDateChange,
@@ -66,10 +68,13 @@ export const PromoSection = ({
 }: PromoSectionProps) => {
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault()
-    onSearch()
+    if (!searchDisabled) {
+      onSearch()
+    }
   }
 
   const canClearFilters = isSearchMode || Boolean(searchText.trim()) || Boolean(searchStartDate) || Boolean(searchEndDate)
+  const searchUnavailableMessage = `${selectedBankName} does not support promotion search yet.`
   const visibleTotal = isSavedView ? savedOfferCount : promoTotal
   const headingText = isSavedView ? 'Saved Offers' : `${selectedBankName} ${selectedCategoryName} Promotions`
   const resultsSummary = isSavedView
@@ -86,9 +91,9 @@ export const PromoSection = ({
             type="search"
             value={searchText}
             onChange={(event) => onSearchTextChange(event.target.value)}
-            placeholder="Search promotions by location, merchant, or keyword"
+            placeholder={searchDisabled ? searchUnavailableMessage : 'Search promotions by location, merchant, or keyword'}
             className="search-input"
-            disabled={isSavedView}
+            disabled={isSavedView || searchDisabled}
           />
           <input
             type="date"
@@ -96,7 +101,7 @@ export const PromoSection = ({
             onChange={(event) => onSearchStartDateChange(event.target.value)}
             className="search-input"
             aria-label="Search start date"
-            disabled={isSavedView}
+            disabled={isSavedView || searchDisabled}
           />
           <input
             type="date"
@@ -104,20 +109,21 @@ export const PromoSection = ({
             onChange={(event) => onSearchEndDateChange(event.target.value)}
             className="search-input"
             aria-label="Search end date"
-            disabled={isSavedView}
+            disabled={isSavedView || searchDisabled}
           />
-          <button type="submit" className="search-btn" disabled={isSavedView}>
+          <button type="submit" className="search-btn" disabled={isSavedView || searchDisabled}>
             Search
           </button>
           <button
             type="button"
             className="search-btn search-btn-secondary"
             onClick={onClearSearchFilters}
-            disabled={isSavedView || !canClearFilters}
+            disabled={isSavedView || searchDisabled || !canClearFilters}
           >
             Clear filters
           </button>
         </form>
+        {searchDisabled && !isSavedView && <p className="search-unavailable-note">{searchUnavailableMessage}</p>}
         <button
           type="button"
           className={`saved-view-toggle${isSavedView ? ' active' : ''}`}

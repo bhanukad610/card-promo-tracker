@@ -25,8 +25,15 @@ export const usePromoData = () => {
   const [loadingPromos, setLoadingPromos] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  const selectedBank = useMemo(
+    () => BANKS.find((bank) => bank.id === selectedBankId) ?? BANKS[0],
+    [selectedBankId],
+  )
+  const canSearchPromos = selectedBank.supportsSearch
   const normalizedSearchText = activeSearchText.trim().toLowerCase()
-  const isSearchMode = normalizedSearchText.length > 0 || Boolean(activeSearchStartDate) || Boolean(activeSearchEndDate)
+  const hasActiveSearchFilters =
+    normalizedSearchText.length > 0 || Boolean(activeSearchStartDate) || Boolean(activeSearchEndDate)
+  const isSearchMode = canSearchPromos && hasActiveSearchFilters
 
   const buildSearchPayload = useCallback(
     (page: number): PromoSearchParams => ({
@@ -187,16 +194,12 @@ export const usePromoData = () => {
     [clearSearchFilters],
   )
 
-  const selectedBank = useMemo(
-    () => BANKS.find((bank) => bank.id === selectedBankId) ?? BANKS[0],
-    [selectedBankId],
-  )
-
   return {
     banks: BANKS,
     selectedBank,
     selectedBankId,
     setSelectedBankId: selectBank,
+    canSearchPromos,
     categories,
     selectedCategoryId,
     setSelectedCategoryId: selectCategory,

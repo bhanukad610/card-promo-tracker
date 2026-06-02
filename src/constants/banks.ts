@@ -7,12 +7,14 @@ export const BANKS: Bank[] = [
     shortName: 'HNB',
     apiBase: 'https://venus.hnb.lk/api',
     fileBase: 'https://assets.hnb.lk/atdi/',
+    supportsSearch: true,
   },
   {
     id: 'sampath',
     name: 'Sampath Bank',
     shortName: 'Sampath',
     apiBase: 'https://www.sampath.lk/api',
+    supportsSearch: false,
   },
 ]
 

@@ -46,6 +46,7 @@ function App() {
     setActiveSearchEndDate,
     clearSearchFilters,
     isSearchMode,
+    canSearchPromos,
   } = usePromoData()
   const { savedPromos, savedPromoIds, toggleSavedPromo } = useSavedPromos()
 
@@ -122,11 +123,16 @@ function App() {
               searchStartDate={searchStartDate}
               searchEndDate={searchEndDate}
               isSearchMode={isSearchMode}
+              searchDisabled={!canSearchPromos}
               onSearchTextChange={setSearchText}
               onSearchStartDateChange={setSearchStartDate}
               onSearchEndDateChange={setSearchEndDate}
               onClearSearchFilters={clearSearchFilters}
               onSearch={() => {
+                if (!canSearchPromos) {
+                  return
+                }
+
                 setShowSavedOffers(false)
                 setActiveSearchText(searchText)
                 setActiveSearchStartDate(searchStartDate)

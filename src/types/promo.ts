@@ -6,6 +6,7 @@ export type Bank = {
   shortName: string
   apiBase: string
   fileBase?: string
+  supportsSearch: boolean
 }
 
 export type Category = {
