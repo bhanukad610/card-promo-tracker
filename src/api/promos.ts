@@ -245,7 +245,7 @@ export const fetchPromosByCategory = async (
   }
 }
 
-export const fetchPromoDetail = async (bankId: BankId, promoId: string, signal: AbortSignal): Promise<PromoDetail> => {
+export const fetchPromoDetail = async (bankId: BankId, promoId: string, signal?: AbortSignal): Promise<PromoDetail> => {
   const bank = getBank(bankId)
   const rawPromoId = promoId.split(':').at(-1) ?? promoId
 

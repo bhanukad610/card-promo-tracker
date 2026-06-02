@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { fetchPromoDetail } from '../api/promos'
-import type { Promo, PromoDetail } from '../types/promo'
+import type { BankId, Promo, PromoDetail } from '../types/promo'
 
 type PromoDetailModalProps = {
   promoId: string
@@ -11,13 +11,46 @@ type PromoDetailModalProps = {
   onClose: () => void
 }
 
+const promoDetailCache = new Map<string, PromoDetail>()
+const pendingPromoDetailRequests = new Map<string, Promise<PromoDetail>>()
+
+const getPromoDetailCacheKey = (bankId: BankId, promoId: string) => `${bankId}:${promoId}`
+
+const loadCachedPromoDetail = (bankId: BankId, promoId: string) => {
+  const cacheKey = getPromoDetailCacheKey(bankId, promoId)
+  const cachedDetail = promoDetailCache.get(cacheKey)
+
+  if (cachedDetail) {
+    return Promise.resolve(cachedDetail)
+  }
+
+  const pendingRequest = pendingPromoDetailRequests.get(cacheKey)
+
+  if (pendingRequest) {
+    return pendingRequest
+  }
+
+  const nextRequest = fetchPromoDetail(bankId, promoId)
+    .then((promoDetail) => {
+      promoDetailCache.set(cacheKey, promoDetail)
+      return promoDetail
+    })
+    .finally(() => {
+      pendingPromoDetailRequests.delete(cacheKey)
+    })
+
+  pendingPromoDetailRequests.set(cacheKey, nextRequest)
+  return nextRequest
+}
+
 export const PromoDetailModal = ({ promoId, promo, isSaved, onToggleSaved, onClose }: PromoDetailModalProps) => {
   const [detail, setDetail] = useState<PromoDetail | null>(promo?.detail ?? null)
   const [detailLoading, setDetailLoading] = useState(false)
   const [detailError, setDetailError] = useState<string | null>(null)
+  const bankId = promo?.bankId ?? 'hnb'
 
   useEffect(() => {
-    const controller = new AbortController()
+    let isActive = true
 
     const loadPromoDetail = async () => {
       setDetailLoading(true)
@@ -29,21 +62,28 @@ export const PromoDetailModal = ({ promoId, promo, isSaved, onToggleSaved, onClo
           return
         }
 
-        const promoDetail = await fetchPromoDetail(promo?.bankId ?? 'hnb', promoId, controller.signal)
-        setDetail(promoDetail)
-      } catch (loadError) {
-        if (!(loadError instanceof DOMException && loadError.name === 'AbortError')) {
+        const promoDetail = await loadCachedPromoDetail(bankId, promoId)
+
+        if (isActive) {
+          setDetail(promoDetail)
+        }
+      } catch {
+        if (isActive) {
           setDetailError('Failed to load promotion details. Please try again.')
         }
       } finally {
-        setDetailLoading(false)
+        if (isActive) {
+          setDetailLoading(false)
+        }
       }
     }
 
     loadPromoDetail()
 
-    return () => controller.abort()
-  }, [promoId, promo])
+    return () => {
+      isActive = false
+    }
+  }, [bankId, promoId, promo?.detail])
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
