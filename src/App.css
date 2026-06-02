@@ -672,3 +672,56 @@
     flex-direction: column;
   }
 }
+
+.bank-select-label {
+  display: block;
+  margin-bottom: 0.4rem;
+  color: var(--muted-text);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.bank-select {
+  width: 100%;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(109, 40, 217, 0.22);
+  border-radius: 16px;
+  padding: 0.75rem 2.5rem 0.75rem 0.85rem;
+  background:
+    linear-gradient(45deg, transparent 50%, var(--accent-strong) 50%) calc(100% - 1.15rem) 50% / 0.45rem 0.45rem no-repeat,
+    linear-gradient(135deg, var(--accent-strong) 50%, transparent 50%) calc(100% - 0.85rem) 50% / 0.45rem 0.45rem no-repeat,
+    var(--category-card-bg);
+  color: var(--title-color);
+  font-size: 0.95rem;
+  font-weight: 800;
+  appearance: none;
+  cursor: pointer;
+}
+
+.bank-select:focus {
+  outline: none;
+  border-color: rgba(109, 40, 217, 0.45);
+  box-shadow: 0 0 0 4px rgba(109, 40, 217, 0.12);
+}
+
+.panel-subtitle-row {
+  margin-top: 0.95rem;
+  margin-bottom: 0.65rem;
+}
+
+.panel-subtitle-row h2 {
+  font-size: 0.95rem;
+  letter-spacing: -0.02em;
+}
+
+.bank-badge {
+  background: rgba(14, 165, 233, 0.14);
+  color: #0369a1;
+  border: 1px solid rgba(14, 165, 233, 0.22);
+}
+
+.page.dark-mode .bank-badge {
+  background: rgba(56, 189, 248, 0.18);
+  color: #bae6fd;
+  border-color: rgba(125, 211, 252, 0.26);
+}

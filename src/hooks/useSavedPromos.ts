@@ -17,19 +17,26 @@ const readSavedPromos = (): Promo[] => {
       return []
     }
 
-    return parsedPromos.filter((promo): promo is Promo => {
-      return (
-        typeof promo === 'object' &&
-        promo !== null &&
-        typeof promo.id === 'number' &&
-        typeof promo.title === 'string' &&
-        typeof promo.thumb === 'string' &&
-        typeof promo.merchant === 'string' &&
-        typeof promo.cardType === 'string' &&
-        typeof promo.to === 'string' &&
-        typeof promo.valid === 'string'
-      )
-    })
+    return parsedPromos
+      .filter((promo): promo is Promo => {
+        return (
+          typeof promo === 'object' &&
+          promo !== null &&
+          (typeof promo.id === 'string' || typeof promo.id === 'number') &&
+          typeof promo.title === 'string' &&
+          typeof promo.thumb === 'string' &&
+          typeof promo.merchant === 'string' &&
+          typeof promo.cardType === 'string' &&
+          typeof promo.to === 'string' &&
+          typeof promo.valid === 'string'
+        )
+      })
+      .map((promo) => ({
+        ...promo,
+        id: typeof promo.id === 'number' ? `hnb:${promo.id}` : promo.id,
+        rawId: typeof promo.rawId === 'number' ? promo.rawId : Number(String(promo.id).split(':').at(-1)),
+        bankId: promo.bankId === 'sampath' ? 'sampath' : 'hnb',
+      }))
   } catch {
     return []
   }

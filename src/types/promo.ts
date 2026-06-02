@@ -1,22 +1,37 @@
+export type BankId = 'hnb' | 'sampath'
+
+export type Bank = {
+  id: BankId
+  name: string
+  shortName: string
+  apiBase: string
+  fileBase?: string
+  supportsSearch: boolean
+}
+
 export type Category = {
-  id: number
+  id: string
   category: string
   order: number
+  bankId: BankId
 }
 
 export type CategoryResponse = {
-  status: number
+  status?: number
   data: Category[]
 }
 
 export type Promo = {
-  id: number
+  id: string
+  rawId: number
+  bankId: BankId
   title: string
   thumb: string
   merchant: string
   cardType: string
   to: string
   valid: string
+  detail?: PromoDetail
 }
 
 export type PromoResponse = {

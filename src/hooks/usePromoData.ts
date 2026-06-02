@@ -1,11 +1,13 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { fetchCategories, fetchPromosByCategory, searchPromos } from '../api/promos'
-import type { Category, Promo, PromoSearchParams } from '../types/promo'
+import { BANKS, DEFAULT_BANK_ID } from '../constants/banks'
+import type { BankId, Category, Promo, PromoSearchParams } from '../types/promo'
 import { formatCategoryName } from '../utils/formatters'
 
 const SEARCH_PAGE_SIZE = 12
 
 export const usePromoData = () => {
+  const [selectedBankId, setSelectedBankId] = useState<BankId>(DEFAULT_BANK_ID)
   const [selectedCardType, setSelectedCardType] = useState<'All' | 'Credit' | 'Debit'>('All')
   const [searchText, setSearchText] = useState('')
   const [searchStartDate, setSearchStartDate] = useState('')
@@ -14,7 +16,7 @@ export const usePromoData = () => {
   const [activeSearchStartDate, setActiveSearchStartDate] = useState('')
   const [activeSearchEndDate, setActiveSearchEndDate] = useState('')
   const [categories, setCategories] = useState<Category[]>([])
-  const [selectedCategoryId, setSelectedCategoryId] = useState<number | null>(null)
+  const [selectedCategoryId, setSelectedCategoryId] = useState<string | null>(null)
   const [promos, setPromos] = useState<Promo[]>([])
   const [promoPage, setPromoPage] = useState(1)
   const [promoTotalPages, setPromoTotalPages] = useState(1)
@@ -23,8 +25,15 @@ export const usePromoData = () => {
   const [loadingPromos, setLoadingPromos] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
+  const selectedBank = useMemo(
+    () => BANKS.find((bank) => bank.id === selectedBankId) ?? BANKS[0],
+    [selectedBankId],
+  )
+  const canSearchPromos = selectedBank.supportsSearch
   const normalizedSearchText = activeSearchText.trim().toLowerCase()
-  const isSearchMode = normalizedSearchText.length > 0 || Boolean(activeSearchStartDate) || Boolean(activeSearchEndDate)
+  const hasActiveSearchFilters =
+    normalizedSearchText.length > 0 || Boolean(activeSearchStartDate) || Boolean(activeSearchEndDate)
+  const isSearchMode = canSearchPromos && hasActiveSearchFilters
 
   const buildSearchPayload = useCallback(
     (page: number): PromoSearchParams => ({
@@ -46,13 +55,13 @@ export const usePromoData = () => {
       setError(null)
 
       try {
-        const categoryJson = await fetchCategories(controller.signal)
+        const categoryJson = await fetchCategories(selectedBankId, controller.signal)
         const sortedCategories = [...categoryJson.data].sort((a, b) =>
           a.order === b.order ? a.category.localeCompare(b.category) : a.order - b.order,
         )
 
         setCategories(sortedCategories)
-        setSelectedCategoryId((prev) => prev ?? sortedCategories[0]?.id ?? null)
+        setSelectedCategoryId(sortedCategories[0]?.id ?? null)
       } catch (loadError) {
         if (!(loadError instanceof DOMException && loadError.name === 'AbortError')) {
           setError('Failed to load categories. Please refresh and try again.')
@@ -65,7 +74,7 @@ export const usePromoData = () => {
     loadCategories()
 
     return () => controller.abort()
-  }, [])
+  }, [selectedBankId])
 
   useEffect(() => {
     if (!isSearchMode && selectedCategoryId === null) {
@@ -80,8 +89,8 @@ export const usePromoData = () => {
 
       try {
         const promoJson = isSearchMode
-          ? await searchPromos(buildSearchPayload(1), controller.signal)
-          : await fetchPromosByCategory(selectedCategoryId as number, 1, selectedCardType, controller.signal)
+          ? await searchPromos(selectedBankId, buildSearchPayload(1), controller.signal)
+          : await fetchPromosByCategory(selectedBankId, selectedCategoryId as string, 1, selectedCardType, controller.signal)
 
         setPromos(promoJson.data)
         setPromoPage(promoJson.page)
@@ -103,7 +112,7 @@ export const usePromoData = () => {
     loadPromos()
 
     return () => controller.abort()
-  }, [buildSearchPayload, isSearchMode, selectedCategoryId, selectedCardType])
+  }, [buildSearchPayload, isSearchMode, selectedBankId, selectedCategoryId, selectedCardType])
 
   const canLoadMorePromos = promoPage < promoTotalPages
 
@@ -118,9 +127,10 @@ export const usePromoData = () => {
     try {
       const nextPage = promoPage + 1
       const promoJson = isSearchMode
-        ? await searchPromos(buildSearchPayload(nextPage), controller.signal)
+        ? await searchPromos(selectedBankId, buildSearchPayload(nextPage), controller.signal)
         : await fetchPromosByCategory(
-            selectedCategoryId as number,
+            selectedBankId,
+            selectedCategoryId as string,
             nextPage,
             selectedCardType,
             controller.signal,
@@ -141,7 +151,7 @@ export const usePromoData = () => {
     } finally {
       setLoadingPromos(false)
     }
-  }, [buildSearchPayload, canLoadMorePromos, isSearchMode, loadingPromos, promoPage, selectedCategoryId, selectedCardType])
+  }, [buildSearchPayload, canLoadMorePromos, isSearchMode, loadingPromos, promoPage, selectedBankId, selectedCategoryId, selectedCardType])
 
   const selectedCategoryName = useMemo(() => {
     if (isSearchMode) {
@@ -164,14 +174,32 @@ export const usePromoData = () => {
   }, [])
 
   const selectCategory = useCallback(
-    (categoryId: number) => {
+    (categoryId: string) => {
       clearSearchFilters()
       setSelectedCategoryId(categoryId)
     },
     [clearSearchFilters],
   )
 
+  const selectBank = useCallback(
+    (bankId: BankId) => {
+      clearSearchFilters()
+      setSelectedBankId(bankId)
+      setSelectedCardType('All')
+      setPromos([])
+      setPromoPage(1)
+      setPromoTotalPages(1)
+      setPromoTotal(0)
+    },
+    [clearSearchFilters],
+  )
+
   return {
+    banks: BANKS,
+    selectedBank,
+    selectedBankId,
+    setSelectedBankId: selectBank,
+    canSearchPromos,
     categories,
     selectedCategoryId,
     setSelectedCategoryId: selectCategory,

@@ -1,8 +1,20 @@
 import type { FormEvent } from 'react'
-import { FILE_BASE } from '../constants/api'
+import { BANKS } from '../constants/banks'
 import type { Promo } from '../types/promo'
 
+const getPromoBank = (promo: Promo) => BANKS.find((item) => item.id === promo.bankId)
+
+const getPromoImageUrl = (promo: Promo) => {
+  if (/^https?:\/\//i.test(promo.thumb)) {
+    return promo.thumb
+  }
+
+  const bank = getPromoBank(promo)
+  return `${bank?.fileBase ?? ''}${promo.thumb}`
+}
+
 type PromoSectionProps = {
+  selectedBankName: string
   selectedCategoryName: string
   isLoading: boolean
   promoTotal: number
@@ -10,9 +22,9 @@ type PromoSectionProps = {
   promoTotalPages: number
   canLoadMorePromos: boolean
   onLoadMorePromos: () => void
-  onOpenPromoDetail: (promoId: number) => void
+  onOpenPromoDetail: (promoId: string) => void
   promos: Promo[]
-  savedPromoIds: Set<number>
+  savedPromoIds: Set<string>
   savedOfferCount: number
   isSavedView: boolean
   onToggleSavedView: () => void
@@ -21,6 +33,7 @@ type PromoSectionProps = {
   searchStartDate: string
   searchEndDate: string
   isSearchMode: boolean
+  searchDisabled: boolean
   onSearchTextChange: (value: string) => void
   onSearchStartDateChange: (value: string) => void
   onSearchEndDateChange: (value: string) => void
@@ -29,6 +42,7 @@ type PromoSectionProps = {
 }
 
 export const PromoSection = ({
+  selectedBankName,
   selectedCategoryName,
   isLoading,
   promoTotal,
@@ -47,6 +61,7 @@ export const PromoSection = ({
   searchStartDate,
   searchEndDate,
   isSearchMode,
+  searchDisabled,
   onSearchTextChange,
   onSearchStartDateChange,
   onSearchEndDateChange,
@@ -60,7 +75,7 @@ export const PromoSection = ({
 
   const canClearFilters = isSearchMode || Boolean(searchText.trim()) || Boolean(searchStartDate) || Boolean(searchEndDate)
   const visibleTotal = isSavedView ? savedOfferCount : promoTotal
-  const headingText = isSavedView ? 'Saved Offers' : `${selectedCategoryName} Promotions`
+  const headingText = isSavedView ? 'Saved Offers' : `${selectedBankName} ${selectedCategoryName} Promotions`
   const resultsSummary = isSavedView
     ? 'Review the offers you saved for later.'
     : `Showing page ${promoPage} of ${promoTotalPages} ${
@@ -70,43 +85,45 @@ export const PromoSection = ({
   return (
     <section className="panel">
       <div className="promo-actions-row">
-        <form className="search-form" onSubmit={handleSubmit} aria-label="Search promotions">
-          <input
-            type="search"
-            value={searchText}
-            onChange={(event) => onSearchTextChange(event.target.value)}
-            placeholder="Search promotions by location, merchant, or keyword"
-            className="search-input"
-            disabled={isSavedView}
-          />
-          <input
-            type="date"
-            value={searchStartDate}
-            onChange={(event) => onSearchStartDateChange(event.target.value)}
-            className="search-input"
-            aria-label="Search start date"
-            disabled={isSavedView}
-          />
-          <input
-            type="date"
-            value={searchEndDate}
-            onChange={(event) => onSearchEndDateChange(event.target.value)}
-            className="search-input"
-            aria-label="Search end date"
-            disabled={isSavedView}
-          />
-          <button type="submit" className="search-btn" disabled={isSavedView}>
-            Search
-          </button>
-          <button
-            type="button"
-            className="search-btn search-btn-secondary"
-            onClick={onClearSearchFilters}
-            disabled={isSavedView || !canClearFilters}
-          >
-            Clear filters
-          </button>
-        </form>
+        {!searchDisabled && (
+          <form className="search-form" onSubmit={handleSubmit} aria-label="Search promotions">
+            <input
+              type="search"
+              value={searchText}
+              onChange={(event) => onSearchTextChange(event.target.value)}
+              placeholder="Search promotions by location, merchant, or keyword"
+              className="search-input"
+              disabled={isSavedView}
+            />
+            <input
+              type="date"
+              value={searchStartDate}
+              onChange={(event) => onSearchStartDateChange(event.target.value)}
+              className="search-input"
+              aria-label="Search start date"
+              disabled={isSavedView}
+            />
+            <input
+              type="date"
+              value={searchEndDate}
+              onChange={(event) => onSearchEndDateChange(event.target.value)}
+              className="search-input"
+              aria-label="Search end date"
+              disabled={isSavedView}
+            />
+            <button type="submit" className="search-btn" disabled={isSavedView}>
+              Search
+            </button>
+            <button
+              type="button"
+              className="search-btn search-btn-secondary"
+              onClick={onClearSearchFilters}
+              disabled={isSavedView || !canClearFilters}
+            >
+              Clear filters
+            </button>
+          </form>
+        )}
         <button
           type="button"
           className={`saved-view-toggle${isSavedView ? ' active' : ''}`}
@@ -133,6 +150,7 @@ export const PromoSection = ({
         <div className="promo-grid">
           {promos.map((promo) => {
             const isSaved = savedPromoIds.has(promo.id)
+            const promoBank = getPromoBank(promo)
 
             return (
               <article key={promo.id} className="promo-card">
@@ -157,7 +175,7 @@ export const PromoSection = ({
                   </svg>
                 </button>
                 <img
-                  src={`${FILE_BASE}${promo.thumb}`}
+                  src={getPromoImageUrl(promo)}
                   alt={`${promo.merchant} logo`}
                   className="promo-thumb"
                   loading="lazy"
@@ -166,6 +184,7 @@ export const PromoSection = ({
                   <p className="promo-merchant">{promo.merchant}</p>
                   <h3>{promo.title}</h3>
                   <div className="promo-meta">
+                    {isSavedView && promoBank && <span className="badge bank-badge">{promoBank.shortName}</span>}
                     <span className="badge">{promo.cardType.toUpperCase()}</span>
                     <span>Valid till {promo.to}</span>
                   </div>
