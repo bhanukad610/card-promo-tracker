@@ -2,12 +2,14 @@ import type { FormEvent } from 'react'
 import { BANKS } from '../constants/banks'
 import type { Promo } from '../types/promo'
 
+const getPromoBank = (promo: Promo) => BANKS.find((item) => item.id === promo.bankId)
+
 const getPromoImageUrl = (promo: Promo) => {
   if (/^https?:\/\//i.test(promo.thumb)) {
     return promo.thumb
   }
 
-  const bank = BANKS.find((item) => item.id === promo.bankId)
+  const bank = getPromoBank(promo)
   return `${bank?.fileBase ?? ''}${promo.thumb}`
 }
 
@@ -150,6 +152,7 @@ export const PromoSection = ({
         <div className="promo-grid">
           {promos.map((promo) => {
             const isSaved = savedPromoIds.has(promo.id)
+            const promoBank = getPromoBank(promo)
 
             return (
               <article key={promo.id} className="promo-card">
@@ -183,6 +186,7 @@ export const PromoSection = ({
                   <p className="promo-merchant">{promo.merchant}</p>
                   <h3>{promo.title}</h3>
                   <div className="promo-meta">
+                    {isSavedView && promoBank && <span className="badge bank-badge">{promoBank.shortName}</span>}
                     <span className="badge">{promo.cardType.toUpperCase()}</span>
                     <span>Valid till {promo.to}</span>
                   </div>
