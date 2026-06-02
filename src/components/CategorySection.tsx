@@ -26,18 +26,21 @@ export const CategorySection = ({
     <div className="panel-title-row">
       <h2>Banks</h2>
     </div>
-    <div className="bank-filter" aria-label="Select bank">
+    <label className="bank-select-label" htmlFor="bank-select">
+      Select bank
+    </label>
+    <select
+      id="bank-select"
+      className="bank-select"
+      value={selectedBankId}
+      onChange={(event) => onSelectBank(event.target.value as BankId)}
+    >
       {banks.map((bank) => (
-        <button
-          key={bank.id}
-          type="button"
-          className={`bank-chip ${selectedBankId === bank.id ? 'active' : ''}`}
-          onClick={() => onSelectBank(bank.id)}
-        >
-          {bank.shortName}
-        </button>
+        <option key={bank.id} value={bank.id}>
+          {bank.name}
+        </option>
       ))}
-    </div>
+    </select>
     {selectedBankId === 'hnb' && (
       <>
         <div className="panel-title-row panel-subtitle-row">
