@@ -1,8 +1,18 @@
 import type { FormEvent } from 'react'
-import { FILE_BASE } from '../constants/api'
+import { BANKS } from '../constants/banks'
 import type { Promo } from '../types/promo'
 
+const getPromoImageUrl = (promo: Promo) => {
+  if (/^https?:\/\//i.test(promo.thumb)) {
+    return promo.thumb
+  }
+
+  const bank = BANKS.find((item) => item.id === promo.bankId)
+  return `${bank?.fileBase ?? ''}${promo.thumb}`
+}
+
 type PromoSectionProps = {
+  selectedBankName: string
   selectedCategoryName: string
   isLoading: boolean
   promoTotal: number
@@ -10,9 +20,9 @@ type PromoSectionProps = {
   promoTotalPages: number
   canLoadMorePromos: boolean
   onLoadMorePromos: () => void
-  onOpenPromoDetail: (promoId: number) => void
+  onOpenPromoDetail: (promoId: string) => void
   promos: Promo[]
-  savedPromoIds: Set<number>
+  savedPromoIds: Set<string>
   savedOfferCount: number
   isSavedView: boolean
   onToggleSavedView: () => void
@@ -29,6 +39,7 @@ type PromoSectionProps = {
 }
 
 export const PromoSection = ({
+  selectedBankName,
   selectedCategoryName,
   isLoading,
   promoTotal,
@@ -60,7 +71,7 @@ export const PromoSection = ({
 
   const canClearFilters = isSearchMode || Boolean(searchText.trim()) || Boolean(searchStartDate) || Boolean(searchEndDate)
   const visibleTotal = isSavedView ? savedOfferCount : promoTotal
-  const headingText = isSavedView ? 'Saved Offers' : `${selectedCategoryName} Promotions`
+  const headingText = isSavedView ? 'Saved Offers' : `${selectedBankName} ${selectedCategoryName} Promotions`
   const resultsSummary = isSavedView
     ? 'Review the offers you saved for later.'
     : `Showing page ${promoPage} of ${promoTotalPages} ${
@@ -157,7 +168,7 @@ export const PromoSection = ({
                   </svg>
                 </button>
                 <img
-                  src={`${FILE_BASE}${promo.thumb}`}
+                  src={getPromoImageUrl(promo)}
                   alt={`${promo.merchant} logo`}
                   className="promo-thumb"
                   loading="lazy"

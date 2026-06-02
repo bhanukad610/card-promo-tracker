@@ -4,7 +4,7 @@ import { fetchPromoDetail } from '../api/promos'
 import type { Promo, PromoDetail } from '../types/promo'
 
 type PromoDetailModalProps = {
-  promoId: number
+  promoId: string
   promo?: Promo
   isSaved: boolean
   onToggleSaved?: () => void
@@ -12,7 +12,7 @@ type PromoDetailModalProps = {
 }
 
 export const PromoDetailModal = ({ promoId, promo, isSaved, onToggleSaved, onClose }: PromoDetailModalProps) => {
-  const [detail, setDetail] = useState<PromoDetail | null>(null)
+  const [detail, setDetail] = useState<PromoDetail | null>(promo?.detail ?? null)
   const [detailLoading, setDetailLoading] = useState(false)
   const [detailError, setDetailError] = useState<string | null>(null)
 
@@ -24,7 +24,12 @@ export const PromoDetailModal = ({ promoId, promo, isSaved, onToggleSaved, onClo
       setDetailError(null)
 
       try {
-        const promoDetail = await fetchPromoDetail(promoId, controller.signal)
+        if (promo?.detail) {
+          setDetail(promo.detail)
+          return
+        }
+
+        const promoDetail = await fetchPromoDetail(promo?.bankId ?? 'hnb', promoId, controller.signal)
         setDetail(promoDetail)
       } catch (loadError) {
         if (!(loadError instanceof DOMException && loadError.name === 'AbortError')) {
@@ -38,7 +43,7 @@ export const PromoDetailModal = ({ promoId, promo, isSaved, onToggleSaved, onClo
     loadPromoDetail()
 
     return () => controller.abort()
-  }, [promoId])
+  }, [promoId, promo])
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {

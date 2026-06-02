@@ -1,15 +1,21 @@
-import type { Category } from '../types/promo'
+import type { Bank, BankId, Category } from '../types/promo'
 import { formatCategoryName } from '../utils/formatters'
 
 type CategorySectionProps = {
+  banks: Bank[]
+  selectedBankId: BankId
+  onSelectBank: (bankId: BankId) => void
   categories: Category[]
-  selectedCategoryId: number | null
-  onSelectCategory: (id: number) => void
+  selectedCategoryId: string | null
+  onSelectCategory: (id: string) => void
   selectedCardType: 'All' | 'Credit' | 'Debit'
   onSelectCardType: (cardType: 'All' | 'Credit' | 'Debit') => void
 }
 
 export const CategorySection = ({
+  banks,
+  selectedBankId,
+  onSelectBank,
   categories,
   selectedCategoryId,
   onSelectCategory,
@@ -18,19 +24,41 @@ export const CategorySection = ({
 }: CategorySectionProps) => (
   <section className="panel">
     <div className="panel-title-row">
-      <h2>Promotion Categories</h2>
+      <h2>Banks</h2>
     </div>
-    <div className="card-type-filter">
-      {(['All', 'Credit', 'Debit'] as const).map((cardType) => (
+    <div className="bank-filter" aria-label="Select bank">
+      {banks.map((bank) => (
         <button
-          key={cardType}
+          key={bank.id}
           type="button"
-          className={`card-type-chip ${selectedCardType === cardType ? 'active' : ''}`}
-          onClick={() => onSelectCardType(cardType)}
+          className={`bank-chip ${selectedBankId === bank.id ? 'active' : ''}`}
+          onClick={() => onSelectBank(bank.id)}
         >
-          {cardType}
+          {bank.shortName}
         </button>
       ))}
+    </div>
+    {selectedBankId === 'hnb' && (
+      <>
+        <div className="panel-title-row panel-subtitle-row">
+          <h2>Card Type</h2>
+        </div>
+        <div className="card-type-filter">
+          {(['All', 'Credit', 'Debit'] as const).map((cardType) => (
+            <button
+              key={cardType}
+              type="button"
+              className={`card-type-chip ${selectedCardType === cardType ? 'active' : ''}`}
+              onClick={() => onSelectCardType(cardType)}
+            >
+              {cardType}
+            </button>
+          ))}
+        </div>
+      </>
+    )}
+    <div className="panel-title-row panel-subtitle-row">
+      <h2>Promotion Categories</h2>
     </div>
     <div className="category-grid">
       {categories.map((item) => (

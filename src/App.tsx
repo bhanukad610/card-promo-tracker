@@ -7,7 +7,7 @@ import { usePromoData } from './hooks/usePromoData'
 import { useSavedPromos } from './hooks/useSavedPromos'
 
 function App() {
-  const [selectedPromoId, setSelectedPromoId] = useState<number | null>(null)
+  const [selectedPromoId, setSelectedPromoId] = useState<string | null>(null)
   const [showSavedOffers, setShowSavedOffers] = useState(false)
   const [isDarkMode, setIsDarkMode] = useState(() => {
     const savedTheme = localStorage.getItem('theme')
@@ -16,6 +16,10 @@ function App() {
     return window.matchMedia('(prefers-color-scheme: dark)').matches
   })
   const {
+    banks,
+    selectedBank,
+    selectedBankId,
+    setSelectedBankId,
     categories,
     selectedCategoryId,
     setSelectedCategoryId,
@@ -64,7 +68,7 @@ function App() {
     <main className={`page ${isDarkMode ? 'dark-mode' : ''}`}>
       <header className="page-header">
         <div className="header-row">
-          <h1>HNB Card Promotions</h1>
+          <h1>Card Promotions</h1>
           <button
             className="theme-toggle-btn"
             type="button"
@@ -79,6 +83,12 @@ function App() {
       {!loadingCategories && !error && (
         <section className="page-content">
           <CategorySection
+            banks={banks}
+            selectedBankId={selectedBankId}
+            onSelectBank={(bankId) => {
+              setShowSavedOffers(false)
+              setSelectedBankId(bankId)
+            }}
             categories={categories}
             selectedCategoryId={selectedCategoryId}
             onSelectCategory={(categoryId) => {
@@ -93,6 +103,7 @@ function App() {
           />
           {!error && (
             <PromoSection
+              selectedBankName={selectedBank.shortName}
               selectedCategoryName={selectedCategoryName}
               isLoading={isLoading}
               promoTotal={displayPromoTotal}
