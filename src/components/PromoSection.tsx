@@ -70,13 +70,10 @@ export const PromoSection = ({
 }: PromoSectionProps) => {
   const handleSubmit = (event: FormEvent) => {
     event.preventDefault()
-    if (!searchDisabled) {
-      onSearch()
-    }
+    onSearch()
   }
 
   const canClearFilters = isSearchMode || Boolean(searchText.trim()) || Boolean(searchStartDate) || Boolean(searchEndDate)
-  const searchUnavailableMessage = `${selectedBankName} does not support promotion search yet.`
   const visibleTotal = isSavedView ? savedOfferCount : promoTotal
   const headingText = isSavedView ? 'Saved Offers' : `${selectedBankName} ${selectedCategoryName} Promotions`
   const resultsSummary = isSavedView
@@ -88,44 +85,45 @@ export const PromoSection = ({
   return (
     <section className="panel">
       <div className="promo-actions-row">
-        <form className="search-form" onSubmit={handleSubmit} aria-label="Search promotions">
-          <input
-            type="search"
-            value={searchText}
-            onChange={(event) => onSearchTextChange(event.target.value)}
-            placeholder={searchDisabled ? searchUnavailableMessage : 'Search promotions by location, merchant, or keyword'}
-            className="search-input"
-            disabled={isSavedView || searchDisabled}
-          />
-          <input
-            type="date"
-            value={searchStartDate}
-            onChange={(event) => onSearchStartDateChange(event.target.value)}
-            className="search-input"
-            aria-label="Search start date"
-            disabled={isSavedView || searchDisabled}
-          />
-          <input
-            type="date"
-            value={searchEndDate}
-            onChange={(event) => onSearchEndDateChange(event.target.value)}
-            className="search-input"
-            aria-label="Search end date"
-            disabled={isSavedView || searchDisabled}
-          />
-          <button type="submit" className="search-btn" disabled={isSavedView || searchDisabled}>
-            Search
-          </button>
-          <button
-            type="button"
-            className="search-btn search-btn-secondary"
-            onClick={onClearSearchFilters}
-            disabled={isSavedView || searchDisabled || !canClearFilters}
-          >
-            Clear filters
-          </button>
-        </form>
-        {searchDisabled && !isSavedView && <p className="search-unavailable-note">{searchUnavailableMessage}</p>}
+        {!searchDisabled && (
+          <form className="search-form" onSubmit={handleSubmit} aria-label="Search promotions">
+            <input
+              type="search"
+              value={searchText}
+              onChange={(event) => onSearchTextChange(event.target.value)}
+              placeholder="Search promotions by location, merchant, or keyword"
+              className="search-input"
+              disabled={isSavedView}
+            />
+            <input
+              type="date"
+              value={searchStartDate}
+              onChange={(event) => onSearchStartDateChange(event.target.value)}
+              className="search-input"
+              aria-label="Search start date"
+              disabled={isSavedView}
+            />
+            <input
+              type="date"
+              value={searchEndDate}
+              onChange={(event) => onSearchEndDateChange(event.target.value)}
+              className="search-input"
+              aria-label="Search end date"
+              disabled={isSavedView}
+            />
+            <button type="submit" className="search-btn" disabled={isSavedView}>
+              Search
+            </button>
+            <button
+              type="button"
+              className="search-btn search-btn-secondary"
+              onClick={onClearSearchFilters}
+              disabled={isSavedView || !canClearFilters}
+            >
+              Clear filters
+            </button>
+          </form>
+        )}
         <button
           type="button"
           className={`saved-view-toggle${isSavedView ? ' active' : ''}`}
