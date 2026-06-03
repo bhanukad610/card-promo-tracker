@@ -313,6 +313,16 @@
   box-shadow: 0 22px 40px -30px rgba(109, 40, 217, 0.25);
 }
 
+.promo-card.expired {
+  border-color: rgba(220, 38, 38, 0.24);
+  background: linear-gradient(180deg, rgba(254, 242, 242, 0.72) 0%, var(--card-bg) 100%);
+}
+
+.expired-badge {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
 .view-more-btn {
   position: absolute;
   right: 0.95rem;
@@ -334,6 +344,14 @@
 .promo-card:focus-within .view-more-btn {
   opacity: 1;
   transform: translateY(0);
+}
+
+.view-more-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.56;
+  color: var(--muted-text);
+  border-color: rgba(148, 163, 184, 0.28);
+  background: rgba(148, 163, 184, 0.12);
 }
 
 .promo-modal-backdrop {

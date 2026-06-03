@@ -1,6 +1,7 @@
 import type { FormEvent } from 'react'
 import { BANKS } from '../constants/banks'
 import type { Promo } from '../types/promo'
+import { isPromoExpired } from '../utils/promoStatus'
 
 const getPromoBank = (promo: Promo) => BANKS.find((item) => item.id === promo.bankId)
 
@@ -151,9 +152,11 @@ export const PromoSection = ({
           {promos.map((promo) => {
             const isSaved = savedPromoIds.has(promo.id)
             const promoBank = getPromoBank(promo)
+            const isExpiredSavedPromo = isSavedView && isPromoExpired(promo.to)
+            const canViewPromoDetail = promo.bankId !== 'hnb'
 
             return (
-              <article key={promo.id} className="promo-card">
+              <article key={promo.id} className={`promo-card${isExpiredSavedPromo ? ' expired' : ''}`}>
                 <button
                   type="button"
                   className={`save-offer-btn${isSaved ? ' saved' : ''}`}
@@ -186,10 +189,17 @@ export const PromoSection = ({
                   <div className="promo-meta">
                     {isSavedView && promoBank && <span className="badge bank-badge">{promoBank.shortName}</span>}
                     <span className="badge">{promo.cardType.toUpperCase()}</span>
+                    {isExpiredSavedPromo && <span className="badge expired-badge">Expired</span>}
                     <span>Valid till {promo.to}</span>
                   </div>
                 </div>
-                <button type="button" className="view-more-btn" onClick={() => onOpenPromoDetail(promo.id)}>
+                <button
+                  type="button"
+                  className="view-more-btn"
+                  onClick={() => onOpenPromoDetail(promo.id)}
+                  disabled={!canViewPromoDetail}
+                  title={canViewPromoDetail ? undefined : 'Details are unavailable for HNB promotions.'}
+                >
                   View more
                 </button>
               </article>
