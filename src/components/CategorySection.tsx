@@ -63,6 +63,21 @@ export const CategorySection = ({
     <div className="panel-title-row panel-subtitle-row">
       <h2>Promotion Categories</h2>
     </div>
+    <label className="category-select-label" htmlFor="category-select">
+      Select promotion category
+    </label>
+    <select
+      id="category-select"
+      className="category-select"
+      value={selectedCategoryId ?? ''}
+      onChange={(event) => onSelectCategory(event.target.value)}
+    >
+      {categories.map((item) => (
+        <option key={item.id} value={item.id}>
+          {formatCategoryName(item.category)}
+        </option>
+      ))}
+    </select>
     <div className="category-grid">
       {categories.map((item) => (
         <button
