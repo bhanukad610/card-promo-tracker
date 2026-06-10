@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
-import { fetchPromoDetail } from '../api/promos'
-import type { BankId, Promo, PromoDetail } from '../types/promo'
+import { fetchPromoDetail } from '../../services/promos.service'
+import styles from './PromoDetailModal.module.css'
+import type { BankId, Promo, PromoDetail } from '../../types/promo'
 
 type PromoDetailModalProps = {
   promoId: string
@@ -102,30 +103,30 @@ export const PromoDetailModal = ({ promoId, promo, isSaved, onToggleSaved, onClo
   }, [onClose])
 
   return createPortal(
-    <div className="promo-modal-backdrop" role="presentation" onClick={onClose}>
+    <div className={styles.promoModalBackdrop} role="presentation" onClick={onClose}>
       <div
-        className="promo-modal"
+        className={styles.promoModal}
         role="dialog"
         aria-modal="true"
         aria-labelledby="promo-modal-title"
         onClick={(event) => event.stopPropagation()}
       >
-        <button type="button" className="promo-modal-close" aria-label="Close promotion details" onClick={onClose}>
+        <button type="button" className={styles.promoModalClose} aria-label="Close promotion details" onClick={onClose}>
           ×
         </button>
         {detailLoading && <p>Loading promotion details...</p>}
-        {detailError && <p className="status error">{detailError}</p>}
+        {detailError && <p className={`${styles.status} ${styles.error}`}>{detailError}</p>}
         {!detailLoading && !detailError && detail && (
           <>
-            <div className="promo-modal-header">
+            <div className={styles.promoModalHeader}>
               <div>
                 <h3 id="promo-modal-title">{detail.title}</h3>
-                <p className="promo-merchant">{detail.merchant}</p>
+                <p className={styles.promoMerchant}>{detail.merchant}</p>
               </div>
               {promo && onToggleSaved && (
                 <button
                   type="button"
-                  className={`modal-save-btn${isSaved ? ' saved' : ''}`}
+                  className={`${styles.modalSaveBtn} ${isSaved ? styles.saved : ''}`}
                   onClick={onToggleSaved}
                   aria-pressed={isSaved}
                 >
@@ -133,8 +134,8 @@ export const PromoDetailModal = ({ promoId, promo, isSaved, onToggleSaved, onClo
                 </button>
               )}
             </div>
-            <p className="subtitle">{detail.valid || `Valid From ${detail.from} to ${detail.to}`}</p>
-            <div className="promo-detail-content" dangerouslySetInnerHTML={{ __html: detail.content }} />
+            <p className={styles.subtitle}>{detail.valid || `Valid From ${detail.from} to ${detail.to}`}</p>
+            <div className={styles.promoDetailContent} dangerouslySetInnerHTML={{ __html: detail.content }} />
           </>
         )}
       </div>

@@ -1,5 +1,6 @@
-import type { Bank, BankId, Category } from '../types/promo'
-import { formatCategoryName } from '../utils/formatters'
+import type { Bank, BankId, Category } from '../../types/promo'
+import { formatCategoryName } from '../../utils/formatters'
+import styles from './CategorySection.module.css'
 
 type CategorySectionProps = {
   banks: Bank[]
@@ -22,16 +23,17 @@ export const CategorySection = ({
   selectedCardType,
   onSelectCardType,
 }: CategorySectionProps) => (
-  <section className="panel">
-    <div className="panel-title-row">
+  <section className={styles.panel}>
+    <div className={styles.panelTitleRow}>
       <h2>Banks</h2>
     </div>
-    <label className="bank-select-label" htmlFor="bank-select">
+
+    <label className={styles.bankSelectLabel} htmlFor="bank-select">
       Select bank
     </label>
     <select
       id="bank-select"
-      className="bank-select"
+      className={styles.bankSelect}
       value={selectedBankId}
       onChange={(event) => onSelectBank(event.target.value as BankId)}
     >
@@ -41,17 +43,18 @@ export const CategorySection = ({
         </option>
       ))}
     </select>
+
     {selectedBankId === 'hnb' && (
       <>
-        <div className="panel-title-row panel-subtitle-row">
+        <div className={`${styles.panelTitleRow} ${styles.panelSubtitleRow}`}>
           <h2>Card Type</h2>
         </div>
-        <div className="card-type-filter">
+        <div className={styles.cardTypeFilter}>
           {(['All', 'Credit', 'Debit'] as const).map((cardType) => (
             <button
               key={cardType}
               type="button"
-              className={`card-type-chip ${selectedCardType === cardType ? 'active' : ''}`}
+              className={`${styles.cardTypeChip} ${selectedCardType === cardType ? styles.active : ''}`}
               onClick={() => onSelectCardType(cardType)}
             >
               {cardType}
@@ -60,15 +63,16 @@ export const CategorySection = ({
         </div>
       </>
     )}
-    <div className="panel-title-row panel-subtitle-row">
+
+    <div className={`${styles.panelTitleRow} ${styles.panelSubtitleRow}`}>
       <h2>Promotion Categories</h2>
     </div>
-    <label className="category-select-label" htmlFor="category-select">
+    <label className={styles.categorySelectLabel} htmlFor="category-select">
       Select promotion category
     </label>
     <select
       id="category-select"
-      className="category-select"
+      className={styles.categorySelect}
       value={selectedCategoryId ?? ''}
       onChange={(event) => onSelectCategory(event.target.value)}
     >
@@ -78,15 +82,16 @@ export const CategorySection = ({
         </option>
       ))}
     </select>
-    <div className="category-grid">
+
+    <div className={styles.categoryGrid}>
       {categories.map((item) => (
         <button
           key={item.id}
           type="button"
-          className={`category-card ${selectedCategoryId === item.id ? 'active' : ''}`}
+          className={`${styles.categoryCard} ${selectedCategoryId === item.id ? styles.active : ''}`}
           onClick={() => onSelectCategory(item.id)}
         >
-          <p className="category-name">{formatCategoryName(item.category)}</p>
+          <p className={styles.categoryName}>{formatCategoryName(item.category)}</p>
         </button>
       ))}
     </div>

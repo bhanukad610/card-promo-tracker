@@ -214,7 +214,10 @@ export const fetchPromosByCategory = async (
 
     const json = (await response.json()) as SampathPromoResponse
     const promos = (json.data ?? []).map(normalizeSampathPromo)
-    const total = json.total ?? json.count ?? (promos.length < SAMPATH_PAGE_SIZE ? (page - 1) * SAMPATH_PAGE_SIZE + promos.length : page * SAMPATH_PAGE_SIZE + 1)
+    const total =
+      json.total ??
+      json.count ??
+      (promos.length < SAMPATH_PAGE_SIZE ? (page - 1) * SAMPATH_PAGE_SIZE + promos.length : page * SAMPATH_PAGE_SIZE + 1)
     const totalPages = json.totalPages ?? json.total_pages ?? (promos.length < SAMPATH_PAGE_SIZE ? page : page + 1)
 
     return {
