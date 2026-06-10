@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { fetchCategories, fetchPromosByCategory, searchPromos } from '../api/promos'
+import { fetchCategories, fetchPromosByCategory, searchPromos } from '../services/promos.service'
 import { BANKS, DEFAULT_BANK_ID } from '../constants/banks'
 import type { BankId, Category, Promo, PromoSearchParams } from '../types/promo'
 import { formatCategoryName } from '../utils/formatters'

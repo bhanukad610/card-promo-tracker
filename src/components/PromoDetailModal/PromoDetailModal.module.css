@@ -1,0 +1,78 @@
+.promoModalBackdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.7);
+  display: grid;
+  place-items: center;
+  padding: 1.25rem;
+  z-index: 100;
+}
+
+.promoModal {
+  width: min(100%, 720px);
+  background: #fff;
+  border-radius: 24px;
+  padding: 1.5rem;
+  box-shadow: 0 30px 80px rgba(15, 23, 42, 0.35);
+  max-height: min(90vh, 860px);
+  overflow: auto;
+}
+
+.promoModalClose {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  border: none;
+  background: transparent;
+  color: #181127;
+  font-size: 1.55rem;
+  cursor: pointer;
+}
+
+.promoModalHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.promoMerchant {
+  margin: 0.35rem 0 0;
+  color: var(--muted-text);
+}
+
+.modalSaveBtn {
+  border: 1px solid rgba(109, 40, 217, 0.3);
+  background: var(--panel-bg);
+  border-radius: 999px;
+  padding: 0.65rem 1rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.modalSaveBtn.saved {
+  background: #6d28d9;
+  color: #fff;
+  border-color: transparent;
+}
+
+.subtitle {
+  color: var(--muted-text);
+  margin-bottom: 1rem;
+}
+
+.promoDetailContent {
+  line-height: 1.8;
+  color: var(--title-color);
+}
+
+.status {
+  margin: 0;
+}
+
+.error {
+  color: #b91c1c;
+  border-color: #fca5a5;
+  background: #fef2f2;
+}
