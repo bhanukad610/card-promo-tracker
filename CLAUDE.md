@@ -45,3 +45,6 @@ HomePage
 - **Expiry detection** (`src/utils/promoStatus.ts`) parses several date formats (ISO, `DD Mon YYYY`, `DD/MM/YYYY`) from the `to` field and is used to flag expired saved promos.
 - **CSS Modules** are used per-component (`.module.css` files co-located with each component). Global styles live in `src/styles/globals.css`.
 - Dark mode preference is persisted to `localStorage` under the key `theme`.
+
+### Dos
+- Add new branch for new development. For new feature use feature/<feature-name>, for a bug bug/<bug-name>
