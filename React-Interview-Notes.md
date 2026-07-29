@@ -1,6 +1,6 @@
 # React Ecosystem — Interview Notes (from card-promo-tracker)
 
-A quick note: this project uses **Hooks** and **component-driven architecture** heavily, but it does **not** use Redux Toolkit, Redux-Saga, or the Context API — it manages everything with plain hooks instead. For those two topics I've explained them simply and shown what the *equivalent* code would look like if this app used them, so you can speak to both "what I built" and "what I know."
+A quick note: this project uses **Hooks**, **Context API**, and **component-driven architecture** directly, but it still does **not** use Redux Toolkit or Redux-Saga. For those two I've explained them simply and shown what the *equivalent* code would look like if this app used them, so you can speak to both "what I built" and "what I know."
 
 ---
 
@@ -71,46 +71,81 @@ setState is called ────────────────────�
 
 **Simple words:** Imagine every component is a person in a big family tree. Normally, if grandma has a message for a great-grandchild, she has to pass it to her kid, who passes it to their kid, and so on — that's "prop drilling." Context is like a group chat: anyone in the family can join the chat and read the message directly, without anyone in between having to pass it along.
 
-**Not used in this project (currently)** — but there's a perfect candidate for it: dark mode. Right now, `isDarkMode` lives in `HomePage.tsx` as local state and is only used there, so drilling isn't a real problem yet. But if `PromoCard`, `SearchFilters`, and `PromoDetailModal` all needed to know the theme deep in the tree, Context would be the natural fix instead of passing `isDarkMode` down through five props.
+**Now used in this project for dark mode.** The theme (`isDarkMode` + `toggleDarkMode`) used to live as local state inside `HomePage.tsx`. It's been pulled out into a `ThemeContext` so any component can read or toggle it without `HomePage` having to pass props down. The context is split across three files, which is the standard React pattern for keeping the context value, the provider, and the consumer hook separate:
 
-**What it would look like:**
+```ts
+// src/context/theme-context.ts — just the context object + its type
+export interface ThemeContextValue {
+  isDarkMode: boolean
+  toggleDarkMode: () => void
+}
+export const ThemeContext = createContext<ThemeContextValue | undefined>(undefined)
+```
 
 ```tsx
-// ThemeContext.tsx
-const ThemeContext = createContext<{ isDarkMode: boolean; toggleTheme: () => void } | null>(null)
+// src/context/ThemeContext.tsx — the Provider: owns the state, reads/writes localStorage
+export function ThemeProvider({ children }: { children: ReactNode }) {
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    const savedTheme = localStorage.getItem('theme')
+    if (savedTheme === 'dark') return true
+    if (savedTheme === 'light') return false
+    return window.matchMedia('(prefers-color-scheme: dark)').matches
+  })
 
-export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const [isDarkMode, setIsDarkMode] = useState(false)
-  const toggleTheme = () => setIsDarkMode((prev) => !prev)
+  useEffect(() => {
+    localStorage.setItem('theme', isDarkMode ? 'dark' : 'light')
+  }, [isDarkMode])
+
+  const toggleDarkMode = () => setIsDarkMode((prev) => !prev)
+
+  return <ThemeContext.Provider value={{ isDarkMode, toggleDarkMode }}>{children}</ThemeContext.Provider>
+}
+```
+
+```ts
+// src/hooks/useTheme.ts — the consumer hook, with a guardrail if used outside the provider
+export function useTheme() {
+  const context = useContext(ThemeContext)
+  if (!context) {
+    throw new Error('useTheme must be used within a ThemeProvider')
+  }
+  return context
+}
+```
+
+The provider wraps the whole app in `App.tsx`, and `HomePage.tsx` just calls the hook — no more local `isDarkMode` state or prop plumbing for it:
+
+```tsx
+// src/App.tsx
+function App() {
   return (
-    <ThemeContext.Provider value={{ isDarkMode, toggleTheme }}>
-      {children}
-    </ThemeContext.Provider>
+    <ThemeProvider>
+      <HomePage />
+    </ThemeProvider>
   )
 }
 
-export const useTheme = () => useContext(ThemeContext)!
-
-// Deep inside PromoCard.tsx — no props needed!
-const { isDarkMode } = useTheme()
+// src/pages/HomePage/HomePage.tsx
+const { isDarkMode, toggleDarkMode } = useTheme()
 ```
 
-**Diagram — prop drilling vs. Context:**
+**Diagram — prop drilling vs. Context (as actually applied here):**
 
 ```
-Prop drilling (current pattern for most state):
-HomePage → CategorySection → (props passed down manually)
-HomePage → PromoSection → PromoCard (props passed down manually)
+Before (local state in HomePage):
+HomePage keeps isDarkMode itself, only HomePage's own JSX can use it
 
-Context (group chat pattern):
-        ThemeContext.Provider (wraps the app)
-        ┌───────────┼────────────┐
-        ▼           ▼            ▼
-  CategorySection  PromoCard  PromoDetailModal
-  (each reads the context directly, no props needed)
+After (Context, current implementation):
+        ThemeProvider (wraps <HomePage /> in App.tsx)
+                    │
+                    ▼
+              HomePage.tsx
+        useTheme() → { isDarkMode, toggleDarkMode }
+   (any component under the provider could call useTheme()
+    directly too, without HomePage passing it down as props)
 ```
 
-**Interview soundbite:** "This app manages state with hooks and props since the tree is shallow, but for cross-cutting concerns like theme or auth that many unrelated components need, I'd reach for Context to avoid drilling props through components that don't care about the value themselves."
+**Interview soundbite:** "Dark mode used to be local state in `HomePage`. I moved it into a `ThemeContext` — split into a context definition, a `ThemeProvider` that owns the state and syncs it to localStorage, and a `useTheme` hook that throws if it's used outside the provider, which catches wiring mistakes early. `App.tsx` wraps the whole tree in `ThemeProvider`, so any component can opt into the theme with one line — no prop drilling — which is exactly the kind of cross-cutting, app-wide concern Context is meant for."
 
 ---
 
@@ -287,7 +322,7 @@ CategorySection     PromoSection      PromoDetailModal
 | Concept | Used in this project? | One-line explanation |
 |---|---|---|
 | Hooks | Yes — `usePromoData`, `useSavedPromos` | Functions that give components memory, effects, and derived values |
-| Context API | No (good candidate: theme) | A "group chat" so components can read shared data without prop drilling |
+| Context API | Yes — `ThemeContext` for dark mode | A "group chat" so components can read shared data without prop drilling |
 | Redux Toolkit | No (`usePromoData` plays a similar role, locally) | One shared, rule-controlled notebook (store) for app-wide state |
 | Redux-Saga | No (`AbortController` + `useEffect` cleanup does the same job) | A background assistant that manages async side effects and cancellation |
 | Component-driven architecture | Yes — `components/` folder | Build small reusable Lego-brick components, then compose them into pages |
