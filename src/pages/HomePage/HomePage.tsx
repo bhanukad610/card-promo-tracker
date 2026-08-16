@@ -60,7 +60,7 @@ function HomePage() {
   const isLoading = !showSavedOffers && (loadingCategories || (selectedCategoryId !== null && loadingPromos))
 
   return (
-    <main className={`${styles.page} ${isDarkMode ? styles.darkMode : ''}`}>
+    <main className={styles.page}>
       <header className={styles.pageHeader}>
         <div className={styles.headerRow}>
           <h1>Card Promotions</h1>
