@@ -1,3 +1,10 @@
+/*
+ * Responsive breakpoint convention (no preprocessor, so these are literal
+ * values repeated per component .module.css file — keep them consistent):
+ *   max-width: 720px — "tablet": collapse two-column/sidebar layouts to one column
+ *   max-width: 480px — "phone": stack flex-wrap rows into a single column
+ */
+
 :root {
   --page-bg-top: #f6f3ff;
   --page-bg-bottom: #fcfbff;
@@ -20,6 +27,47 @@
   --input-bg: rgba(255, 255, 255, 0.92);
   --secondary-btn-bg: #fff;
   --secondary-btn-color: #5b21b6;
+  --modal-bg: #fff;
+  --error-bg: #fef2f2;
+  --error-border: #fca5a5;
+  --error-color: #b91c1c;
+  --expired-badge-bg: rgba(248, 113, 113, 0.15);
+  --expired-badge-color: #b91c1c;
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --page-bg-top: #0f172a;
+  --page-bg-bottom: #111827;
+  --panel-border: rgba(196, 181, 253, 0.16);
+  --panel-shadow: 0 24px 60px -34px rgba(0, 0, 0, 0.75);
+  --title-color: #f3f4f6;
+  --muted-text: #9ca3af;
+  --accent-strong: #c4b5fd;
+  --accent-soft: rgba(139, 92, 246, 0.15);
+  --panel-bg: rgba(15, 23, 42, 0.78);
+  --chip-bg: rgba(109, 40, 217, 0.2);
+  --chip-color: #ddd6fe;
+  --badge-bg: rgba(196, 181, 253, 0.22);
+  --badge-color: #ede9fe;
+  --card-bg: rgba(30, 41, 59, 0.75);
+  --category-card-bg: linear-gradient(180deg, rgba(30, 41, 59, 0.96) 0%, rgba(15, 23, 42, 0.98) 100%);
+  --category-card-hover-bg: linear-gradient(180deg, rgba(51, 65, 85, 0.98) 0%, rgba(30, 41, 59, 0.96) 100%);
+  --category-card-active-bg: linear-gradient(180deg, rgba(76, 29, 149, 0.58) 0%, rgba(49, 46, 129, 0.82) 100%);
+  --category-card-active-color: #f5f3ff;
+  --input-bg: rgba(30, 41, 59, 0.9);
+  --secondary-btn-bg: rgba(30, 41, 59, 0.92);
+  --secondary-btn-color: #ddd6fe;
+  --modal-bg: #1e293b;
+  --error-bg: rgba(127, 29, 29, 0.28);
+  --error-border: rgba(248, 113, 113, 0.4);
+  --error-color: #fca5a5;
+  --expired-badge-bg: rgba(248, 113, 113, 0.22);
+  --expired-badge-color: #fca5a5;
 }
 
 * {

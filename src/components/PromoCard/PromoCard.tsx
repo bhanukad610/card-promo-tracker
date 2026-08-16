@@ -32,7 +32,6 @@ export const PromoCard = ({
   const isSaved = savedPromoIds.has(promo.id)
   const promoBank = getPromoBank(promo)
   const isExpiredSavedPromo = isSavedView && isPromoExpired(promo.to)
-  const canViewPromoDetail = promo.bankId !== 'hnb'
 
   return (
     <article className={`${styles.promoCard} ${isExpiredSavedPromo ? styles.expired : ''}`}>
@@ -74,7 +73,6 @@ export const PromoCard = ({
         type="button"
         className={styles.viewMoreBtn}
         onClick={() => onOpenPromoDetail(promo.id)}
-        disabled={!canViewPromoDetail}
       >
         View more
       </button>

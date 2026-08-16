@@ -28,6 +28,22 @@
   font-size: 0.9rem;
 }
 
+.categorySelect,
+.categorySelectLabel {
+  display: none;
+}
+
+@media (max-width: 720px) {
+  .categorySelect,
+  .categorySelectLabel {
+    display: block;
+  }
+
+  .categoryGrid {
+    display: none;
+  }
+}
+
 .bankSelect,
 .categorySelect {
   width: 100%;
@@ -48,13 +64,17 @@
 
 .cardTypeChip {
   border: 1px solid rgba(109, 40, 217, 0.2);
-  background: #fff;
-  color: #5b21b6;
+  background: var(--secondary-btn-bg);
+  color: var(--secondary-btn-color);
   border-radius: 999px;
   padding: 0.35rem 0.7rem;
   font-size: 0.8rem;
   font-weight: 700;
   cursor: pointer;
+  min-height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .cardTypeChip:hover,

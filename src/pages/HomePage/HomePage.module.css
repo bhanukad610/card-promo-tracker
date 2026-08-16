@@ -8,30 +8,6 @@
     linear-gradient(180deg, var(--page-bg-top) 0%, var(--page-bg-bottom) 32%, #ffffff 100%);
 }
 
-.darkMode {
-  --page-bg-top: #0f172a;
-  --page-bg-bottom: #111827;
-  --panel-border: rgba(196, 181, 253, 0.16);
-  --panel-shadow: 0 24px 60px -34px rgba(0, 0, 0, 0.75);
-  --title-color: #f3f4f6;
-  --muted-text: #9ca3af;
-  --accent-strong: #c4b5fd;
-  --accent-soft: rgba(139, 92, 246, 0.15);
-  --panel-bg: rgba(15, 23, 42, 0.78);
-  --chip-bg: rgba(109, 40, 217, 0.2);
-  --chip-color: #ddd6fe;
-  --badge-bg: rgba(196, 181, 253, 0.22);
-  --badge-color: #ede9fe;
-  --card-bg: rgba(30, 41, 59, 0.75);
-  --category-card-bg: linear-gradient(180deg, rgba(30, 41, 59, 0.96) 0%, rgba(15, 23, 42, 0.98) 100%);
-  --category-card-hover-bg: linear-gradient(180deg, rgba(51, 65, 85, 0.98) 0%, rgba(30, 41, 59, 0.96) 100%);
-  --category-card-active-bg: linear-gradient(180deg, rgba(76, 29, 149, 0.58) 0%, rgba(49, 46, 129, 0.82) 100%);
-  --category-card-active-color: #f5f3ff;
-  --input-bg: rgba(30, 41, 59, 0.9);
-  --secondary-btn-bg: rgba(30, 41, 59, 0.92);
-  --secondary-btn-color: #ddd6fe;
-}
-
 .pageHeader {
   text-align: left;
   padding: 1.25rem 1.25rem 0.25rem;
@@ -53,6 +29,10 @@
   font-size: 0.82rem;
   font-weight: 700;
   cursor: pointer;
+  min-height: 2.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .pageHeader h1 {
@@ -69,4 +49,10 @@
   grid-template-columns: minmax(220px, 280px) minmax(0, 1fr);
   gap: 1.25rem;
   align-items: start;
+}
+
+@media (max-width: 720px) {
+  .pageContent {
+    grid-template-columns: 1fr;
+  }
 }
