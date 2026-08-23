@@ -35,7 +35,7 @@ const readSavedPromos = (): Promo[] => {
         ...promo,
         id: typeof promo.id === 'number' ? `hnb:${promo.id}` : promo.id,
         rawId: typeof promo.rawId === 'number' ? promo.rawId : Number(String(promo.id).split(':').at(-1)),
-        bankId: promo.bankId === 'sampath' ? 'sampath' : 'hnb',
+        bankId: 'hnb',
       }))
   } catch {
     return []

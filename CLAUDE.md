@@ -39,8 +39,8 @@ HomePage
 
 ### Key design details
 
-- **HNB** fetches promo detail on demand (`fetchPromoDetail` → `GET /get_web_card_promo?id=`). Sampath embeds full detail in the listing response, so `fetchPromoDetail` throws for `bankId === 'sampath'`.
-- **Search** is HNB-only (`supportsSearch: false` on Sampath). `SearchFilters` disables its inputs when `searchDisabled` is true.
+- **HNB** fetches promo detail on demand (`fetchPromoDetail` → `GET /get_web_card_promo?id=`).
+- **Search** support is per-bank via `supportsSearch` on the `Bank` config. `SearchFilters` disables its inputs when `searchDisabled` is true.
 - **Saved promos** persist to `localStorage` under the key `saved-promos-v1` as serialized `Promo[]`. `useSavedPromos` validates shape on read and migrates legacy numeric IDs to composite string IDs.
 - **Expiry detection** (`src/utils/promoStatus.ts`) parses several date formats (ISO, `DD Mon YYYY`, `DD/MM/YYYY`) from the `to` field and is used to flag expired saved promos.
 - **CSS Modules** are used per-component (`.module.css` files co-located with each component). Global styles live in `src/styles/globals.css`.

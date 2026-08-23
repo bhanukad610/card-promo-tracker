@@ -1,4 +1,4 @@
-export type BankId = 'hnb' | 'sampath'
+export type BankId = 'hnb'
 
 export type Bank = {
   id: BankId
