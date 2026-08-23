@@ -1,10 +1,10 @@
 # Card Promo Tracker
 
-Card Promo Tracker is a lightweight React app for browsing card promotions by bank and category. It currently supports HNB and Sampath Bank, lets users switch between banks and promotion categories, and shows the current set of offers in a simple card-based interface.
+Card Promo Tracker is a lightweight React app for browsing card promotions by bank and category. It currently supports HNB, lets users switch between promotion categories, and shows the current set of offers in a simple card-based interface.
 
 ## What the app does
 
-- Fetches promotion categories from HNB and Sampath Bank APIs
+- Fetches promotion categories from the HNB API
 - Lets users switch between supported banks
 - Sorts categories by the API-provided display order
 - Auto-selects the first available category on load
@@ -15,7 +15,6 @@ Card Promo Tracker is a lightweight React app for browsing card promotions by ba
 ## Current behavior
 
 - HNB promotions can be filtered by all, credit, or debit card types
-- Sampath promotions are fetched from Sampath category pages and normalized into the shared promotion shape
 - The app requests page `1` from the selected bank promotions endpoint
 - Category and promotion data are loaded live from the selected bank API at runtime
 - If the API request fails, the app shows a user-facing error message
@@ -88,13 +87,6 @@ npm run preview
 - Promotion detail: `GET /get_web_card_promo?id={id}`
 
 Base URL: `https://venus.hnb.lk/api`
-
-### Sampath Bank
-
-- Categories: `GET /offer-catergories`
-- Promotions by category: `GET /card-promotions?category={value}&page_number={page}&size=8`
-
-Base URL: `https://www.sampath.lk/api`
 
 ## Notes
 
